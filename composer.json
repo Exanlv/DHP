@@ -1,0 +1,15 @@
+{
+    "name": "exan/dhp",
+    "description": "Library to interact with the Discord api/gateway",
+    "type": "library",
+    "license": "GPL-3.0",
+    "require": {
+        "exan/dhp-core": "^0.2.1",
+        "restcord/restcord": "^0.3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "DHP\\": "src"
+        }
+    }
+}
