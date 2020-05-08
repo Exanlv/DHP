@@ -2,9 +2,7 @@
 namespace DHP;
 
 use DHPCore\MinimalDiscordClient;
-use RestCord\DiscordClient as RestClient;
-
-use DHP\Classes\Message;
+use DHP\RestClient\Client as RestClient;
 
 class Client
 {
@@ -22,15 +20,16 @@ class Client
     {
         $this->minimal_client = new MinimalDiscordClient($token);
 
-        $this->rest_client = new RestClient(['token' => $token]);
+        $this->rest_client = new RestClient($token);
 
         $rest_client = &$this->rest_client;
 
-        $this->minimal_client->on('MESSAGE_CREATE', function ($d) use ($rest_client) {
-            $message = new Message($d, $rest_client);
+        $this->minimal_client->on('HEARTBEAT', function () use (&$rest_client) {
+            $rest_client->cleanup();
+        });
 
-            if ($message->content === 'ping')
-                $message->reply('pong!');
+        $this->minimal_client->on('TICK', function () use (&$rest_client) {
+            $rest_client->tick();
         });
 
         $this->minimal_client->start_handling();
