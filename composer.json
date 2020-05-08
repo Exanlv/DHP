@@ -4,8 +4,7 @@
     "type": "library",
     "license": "GPL-3.0",
     "require": {
-        "exan/dhp-core": "^0.2.1",
-        "restcord/restcord": "^0.3.2"
+        "exan/dhp-core": "^0.3"
     },
     "autoload": {
         "psr-4": {
