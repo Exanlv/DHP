@@ -1,6 +1,7 @@
 <?php
 namespace DHP\RestClient;
 
+use Closure;
 use DHP\RestClient\Channel\ChannelController;
 
 class Client
@@ -77,8 +78,6 @@ class Client
 
         $this->last_requests[$rate_limit_key] = $res;
 
-        print_r($res);
-
         if ($request->callback !== null) {
             ($request->callback)($res);
         }
@@ -94,8 +93,6 @@ class Client
                 unset($this->last_requests[$key]);
             }
         }
-
-        print_r($this->last_requests);
     }
 
     /**
@@ -109,7 +106,7 @@ class Client
      * @return object
 
      */
-    public function queue_request($method, $uri, $data = null, $headers = [], $rate_limit_key, $callback = null)
+    public function queue_request($method, $uri, $data = null, $headers = [], $rate_limit_key, Closure $callback = null)
     {
         if (!isset($this->request_queue[$rate_limit_key]))
             $this->request_queue[$rate_limit_key] = [];

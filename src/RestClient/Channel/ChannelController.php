@@ -1,6 +1,8 @@
 <?php
 namespace DHP\RestClient\Channel;
 
+use Closure;
+use DHP\Classes\Message;
 use DHP\RestClient\Channel\Classes\EditMessageOptions;
 use DHP\RestClient\Channel\Classes\Emoji;
 use DHP\RestClient\Channel\Classes\FetchMessagesOptions;
@@ -67,11 +69,17 @@ class ChannelController
      * @param string $channel_id
      * @param SendMessageOptions $options
      */
-    public function send_message(string $channel_id, SendMessageOptions $options)
+    public function send_message(string $channel_id, SendMessageOptions $options, Closure $callback = null)
     {
         $uri = 'channels/' . $channel_id . '/messages';
 
-        $this->rest_client->queue_request('post', $uri, $options, [], $uri);
+        $final_callback = $callback === null ? null : function ($response) use ($callback) {
+            $message = new Message($response->data, $this->rest_client);
+
+            $callback($message);
+        };
+
+        $this->rest_client->queue_request('post', $uri, $options, [], $uri, $final_callback);
     }
 
     /**

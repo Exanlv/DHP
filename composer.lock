@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b1a621dae08ac1808d535c8b9108ae0",
+    "content-hash": "6fe4176db552af81be118c399e53571d",
     "packages": [
         {
             "name": "exan/dhp-core",

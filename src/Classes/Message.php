@@ -1,15 +1,16 @@
 <?php
 namespace DHP\Classes;
 
+use Closure;
 use DHP\Classes\User;
 use DHP\Classes\PartialMember;
 use DHP\Classes\Attachment;
 use DHP\Classes\MentionedUser;
 
-use RestCord\DiscordClient as RestClient;
-
 use DateTime;
 use DateTimeZone;
+use DHP\RestClient\Channel\Classes\SendMessageOptions;
+use DHP\RestClient\Client as RestClient;
 
 class Message
 {
@@ -122,7 +123,7 @@ class Message
      *  - type enum
      */
 
-    public function __construct($data, &$rest_client)
+    public function __construct($data, RestClient &$rest_client)
     {
         $this->rest_client = &$rest_client;
 
@@ -135,7 +136,9 @@ class Message
             $this->guild_id = $data->guild_id;
         
         $this->user = new User($data->author);
-        $this->partial_member = new PartialMember($data->member);
+        
+        if (property_exists($data, 'member'))
+            $this->partial_member = new PartialMember($data->member);
         
         $this->content = $data->content;
         $this->sent_at = new DateTime($data->timestamp, $utc_date_time_zone);
@@ -184,11 +187,8 @@ class Message
         ][$data->type];
     }
 
-    public function reply($content, $options = [])
+    public function reply(SendMessageOptions $options, Closure $callback = null)
     {
-        $options['channel.id'] = (integer) $this->channel_id;
-        $options['content'] = '<@' . $this->user->id . '> ' . $content;
-
-        $this->rest_client->channel->createMessage($options);
+        $this->rest_client->channel_controller->send_message($this->channel_id, $options, $callback);
     }
 }

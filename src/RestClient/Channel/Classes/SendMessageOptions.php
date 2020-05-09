@@ -39,6 +39,13 @@ class SendMessageOptions
      */
     public $allowed_mentions;
 
+    /**
+     * @todo
+     * 
+     * Embed
+     * Payload
+     */
+
     public function __construct()
     {
         $this->allowed_mentions = new AllowedMentions();

@@ -1,12 +1,14 @@
 <?php
 namespace DHP;
 
+use DHP\Classes\Message;
 use DHP\RestClient\Channel\ChannelRestClient;
 use DHP\RestClient\Channel\Classes\SendMessageOptions;
 use DHPCore\MinimalDiscordClient;
 use DHP\RestClient\Client as RestClient;
+use EventEmitter\EventEmitter;
 
-class Client
+class Client extends EventEmitter
 {
     /**
      * @var MinimalDiscordClient
@@ -34,14 +36,14 @@ class Client
             $rest_client->tick();
         });
 
-        print_r($this->rest_clients);
+        $discord_client = &$this;
 
-        $message_options = new SendMessageOptions();
+        $this->minimal_client->on('MESSAGE_CREATE', function ($data) use (&$discord_client, &$rest_client) {
+            $discord_client->emit('message', (new Message($data, $rest_client)));
+        });
+    }
 
-        $message_options->content = 'Test! :D';
-
-        $this->rest_client->channel_controller->send_message('705920863912067155', $message_options);
-
+    public function start_handling() {
         $this->minimal_client->start_handling();
     }
 }

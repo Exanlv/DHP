@@ -4,7 +4,8 @@
     "type": "library",
     "license": "GPL-3.0",
     "require": {
-        "exan/dhp-core": "^0.3"
+        "exan/dhp-core": "^0.3",
+        "exan/event_emitter": "^1.0"
     },
     "autoload": {
         "psr-4": {
