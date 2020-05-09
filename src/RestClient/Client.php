@@ -1,6 +1,8 @@
 <?php
 namespace DHP\RestClient;
 
+use DHP\RestClient\Channel\ChannelController;
+
 class Client
 {
     /**
@@ -16,17 +18,23 @@ class Client
     /**
      * @var array
      */
-    public $last_requests;
+    public $last_requests = [];
 
     /**
      * @var array
      */
-    private $request_queue;
+    private $request_queue = [];
+
+    /**
+     * @var ChannelController
+     */
+    public $channel_controller;
 
     public function __construct($token)
     {
-        $this->next_cleanup = time() + 10;
         $this->token = $token;
+
+        $this->channel_controller = new ChannelController($this);
     }
 
     /**
@@ -68,6 +76,8 @@ class Client
         $res = $this->send_request($request->method, $request->uri, $request->data, $request->headers);
 
         $this->last_requests[$rate_limit_key] = $res;
+
+        print_r($res);
 
         if ($request->callback !== null) {
             ($request->callback)($res);
