@@ -4,6 +4,7 @@ require(__DIR__ . '/vendor/autoload.php');
 use DHP\Classes\Channel;
 use DHP\Classes\Message;
 use DHP\Client;
+use DHP\RestClient\Channel\Classes\EditChannelOptions;
 use DHP\RestClient\Channel\Classes\EditMessageOptions;
 use DHP\RestClient\Channel\Classes\SendMessageOptions;
 
@@ -36,6 +37,21 @@ $client->on('message', function (Message $message) {
             $reply->content = 'Message deleted <o/';
             
             $message->reply($reply);
+        });
+    }
+
+    if ($message->content === 'edit') {
+        $message->channel(function (Channel $channel) {
+            $edit = new EditChannelOptions();
+            $edit->name = 'Test ' . mt_rand(10000, 99999);
+
+            $channel->edit($edit);
+        });
+    }
+
+    if ($message->content === 'delete-channel') {
+        $message->channel(function (Channel $channel) {
+            // $channel->delete();
         });
     }
 });

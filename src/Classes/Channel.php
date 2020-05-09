@@ -2,6 +2,8 @@
 
 namespace DHP\Classes;
 
+use Closure;
+use DHP\RestClient\Channel\Classes\EditChannelOptions;
 use DHP\RestClient\Client as RestClient;
 
 class Channel
@@ -165,5 +167,15 @@ class Channel
 
         if (property_exists($data, 'last_pin_timestamp'))
             $this->last_pin_timestamp = $data->last_pin_timestamp;
+    }
+
+    public function edit(EditChannelOptions $options, Closure $callback = null)
+    {
+        $this->rest_client->channel_controller->edit($this->id, $options, $callback);
+    }
+
+    public function delete(Closure $callback = null)
+    {
+        $this->rest_client->channel_controller->delete($this->id, $callback);
     }
 }

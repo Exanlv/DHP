@@ -44,17 +44,31 @@ class ChannelController
      * @param string $channel_id,
      * @param EditChannelOptions $options
      */
-    public function edit(string $channel_id, EditChannelOptions $options)
+    public function edit(string $channel_id, EditChannelOptions $options, Closure $callback = null)
     {
+        $uri = 'channels/' . $channel_id;
 
+        $final_callback = $callback === null ? null : function ($data) use ($callback) {
+            $channel = new Channel($data->data, $this->rest_client);
+            
+            $callback($channel);
+        };
+
+        foreach ($options as $key => $option)
+            if ($option === null)
+                unset($options->{$key});
+
+        $this->rest_client->queue_request('patch', $uri, $options, [], $uri, $final_callback);
     }
 
     /**
      * @param string $channel_id
      */
-    public function delete(string $channel_id)
+    public function delete(string $channel_id, Closure $callback = null)
     {
+        $uri = 'channels/' . $channel_id;
 
+        $this->rest_client->queue_request('delete', $uri, null, [], $uri, $callback);
     }
 
     /**
