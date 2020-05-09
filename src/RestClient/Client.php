@@ -3,6 +3,7 @@ namespace DHP\RestClient;
 
 use Closure;
 use DHP\RestClient\Channel\ChannelController;
+use DHPCore\Errors\DiscordAPIError;
 
 class Client
 {
@@ -51,17 +52,17 @@ class Client
             
             if (!isset($this->last_requests[$rate_limit_key])) {
                 $this->handle_queued_request($rate_limit_key);
-                break;
+                continue;
             }
 
             if (!property_exists($this->last_requests[$rate_limit_key]->headers, 'x-ratelimit-bucket')) {
                 $this->handle_queued_request($rate_limit_key);
-                break;
+                continue;
             }
 
             if ($this->last_requests[$rate_limit_key]->headers->{'x-ratelimit-reset'} < time() || $this->last_requests[$rate_limit_key]->headers->{'x-ratelimit-remaining'} > 0) {
                 $this->handle_queued_request($rate_limit_key);
-                break;
+                continue;
             }
         }
     }
@@ -76,6 +77,9 @@ class Client
 
         $res = $this->send_request($request->method, $request->uri, $request->data, $request->headers);
 
+        if ($res->status !== $request->expected_response_code)
+            throw new DiscordAPIError(print_r($res, true));
+
         $this->last_requests[$rate_limit_key] = $res;
 
         if ($request->callback !== null) {
@@ -89,7 +93,7 @@ class Client
     public function cleanup()
     {
         foreach ($this->last_requests as $key => $request) {
-            if ($request->headers->{'x-ratelimit-reset'} < time()) {
+            if (!property_exists($request->headers, 'x-ratelimit-reset') ||$request->headers->{'x-ratelimit-reset'} < time()) {
                 unset($this->last_requests[$key]);
             }
         }
@@ -106,7 +110,7 @@ class Client
      * @return object
 
      */
-    public function queue_request($method, $uri, $data = null, $headers = [], $rate_limit_key, Closure $callback = null)
+    public function queue_request($method, $uri, $data = null, $headers = [], $rate_limit_key, Closure $callback = null, $expected_response_code = '200')
     {
         if (!isset($this->request_queue[$rate_limit_key]))
             $this->request_queue[$rate_limit_key] = [];
@@ -116,7 +120,8 @@ class Client
             'uri' => $uri,
             'data' => $data,
             'headers' => $headers,
-            'callback' => $callback
+            'callback' => $callback,
+            'expected_response_code' => $expected_response_code
         ];
     }
 

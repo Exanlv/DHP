@@ -2,7 +2,9 @@
 namespace DHP\RestClient\Channel;
 
 use Closure;
+use DHP\Classes\Channel;
 use DHP\Classes\Message;
+use DHP\RestClient\Channel\Classes\EditChannelOptions;
 use DHP\RestClient\Channel\Classes\EditMessageOptions;
 use DHP\RestClient\Channel\Classes\Emoji;
 use DHP\RestClient\Channel\Classes\FetchMessagesOptions;
@@ -25,16 +27,24 @@ class ChannelController
     /**
      * @param string $channel_id
      */
-    public function get(string $channel_id)
+    public function get(string $channel_id, Closure $callback = null)
     {
+        $uri = 'channels/' . $channel_id;
 
+        $final_callback = $callback === null ? null : function ($data) use ($callback) {
+            $channel = new Channel($data->data, $this->rest_client);
+
+            $callback($channel);
+        };
+
+        $this->rest_client->queue_request('get', $uri, null, [], $uri, $final_callback);
     }
 
     /**
      * @param string $channel_id,
-     * @param EditMessageOptions $options
+     * @param EditChannelOptions $options
      */
-    public function edit(string $channel_id, EditMessageOptions $options)
+    public function edit(string $channel_id, EditChannelOptions $options)
     {
 
     }
@@ -80,6 +90,32 @@ class ChannelController
         };
 
         $this->rest_client->queue_request('post', $uri, $options, [], $uri, $final_callback);
+    }
+
+    public function edit_message(string $channel_id, string $message_id, EditMessageOptions $options, Closure $callback = null)
+    {
+        $rate_limit_key = 'channels/' . $channel_id . '/messages';
+        $uri = $rate_limit_key . '/' . $message_id;
+
+        $final_callback = $callback === null ? null : function ($response) use ($callback) {
+            $message = new Message($response->data, $this->rest_client);
+
+            $callback($message);
+        };
+
+        $this->rest_client->queue_request('patch', $uri, $options, [], $rate_limit_key, $final_callback);
+    }
+
+    /**
+     * @param string $channel_id
+     * @param string $message_id
+     */
+    public function delete_message(string $channel_id, string $message_id, Closure $callback = null)
+    {
+        $rate_limit_key = 'channels/' . $channel_id . '/messages';
+        $uri = $rate_limit_key . '/' . $message_id;
+
+        $this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback, '204');
     }
 
     /**
@@ -136,15 +172,6 @@ class ChannelController
      * @param string $message_id
      */
     public function delete_all_reactions_of_type(string $channel_id, string $message_id)
-    {
-
-    }
-
-    /**
-     * @param string $channel_id
-     * @param string $message_id
-     */
-    public function delete_message(string $channel_id, string $message_id)
     {
 
     }

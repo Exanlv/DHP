@@ -9,13 +9,12 @@ use DHP\Classes\MentionedUser;
 
 use DateTime;
 use DateTimeZone;
+use DHP\RestClient\Channel\Classes\EditMessageOptions;
 use DHP\RestClient\Channel\Classes\SendMessageOptions;
 use DHP\RestClient\Client as RestClient;
 
 class Message
 {
-    
-
     /**
      * @var string
      */
@@ -189,6 +188,30 @@ class Message
 
     public function reply(SendMessageOptions $options, Closure $callback = null)
     {
-        $this->rest_client->channel_controller->send_message($this->channel_id, $options, $callback);
+        $this->rest_client->channel_controller->send_message(
+            $this->channel_id,
+            $options,
+            $callback
+        );
+    }
+
+    public function edit(EditMessageOptions $options, Closure $callback = null)
+    {
+        $this->rest_client->channel_controller->edit_message(
+            $this->channel_id,
+            $this->id,
+            $options,
+            $callback
+        );
+    }
+
+    public function channel(Closure $callback)
+    {
+        $this->rest_client->channel_controller->get($this->channel_id, $callback);
+    }
+
+    public function delete(Closure $callback = null)
+    {
+        $this->rest_client->channel_controller->delete_message($this->channel_id, $this->id, $callback);
     }
 }
