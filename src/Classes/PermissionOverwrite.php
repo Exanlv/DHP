@@ -15,12 +15,12 @@ class PermissioOverwrite
     public $type;
 
     /**
-     * @var integer
+     * @var int
      */
     public $allow;
 
     /**
-     * @var integer
+     * @var int
      */
     public $deny;
 

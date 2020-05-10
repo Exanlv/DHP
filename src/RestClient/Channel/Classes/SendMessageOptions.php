@@ -10,7 +10,7 @@ class SendMessageOptions
     public $content;
 
     /**
-     * @var integer|string
+     * @var int|string
      */
     public $nonce;
 
@@ -25,7 +25,7 @@ class SendMessageOptions
     public $file;
 
     /**
-     * @var any
+     * @var Embed
      */
     public $embed;
 
@@ -42,8 +42,8 @@ class SendMessageOptions
     /**
      * @todo
      * 
-     * Embed
      * Payload
+     * File
      */
 
     public function __construct()

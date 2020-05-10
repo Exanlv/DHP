@@ -54,17 +54,17 @@ class User
     public $email;
 
     /**
-     * @var integer
+     * @var int
      */
     public $flags;
 
     /**
-     * @var integer
+     * @var int
      */
     public $public_flags;
 
     /**
-     * @var integer
+     * @var int
      */
     public $premium_type;
 

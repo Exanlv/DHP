@@ -59,17 +59,17 @@ class Channel
     public $last_message_id;
 
     /**
-     * @var integer
+     * @var int
      */
     public $bitrate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $user_limit;
 
     /**
-     * @var integer
+     * @var int
      */
     public $user_rate_limit;
 

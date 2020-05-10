@@ -14,7 +14,7 @@ class Attachment
     public $filename;
 
     /**
-     * @var integer
+     * @var int
      */
     public $size;
 
@@ -29,12 +29,12 @@ class Attachment
     public $proxy_url;
 
     /**
-     * @var integer
+     * @var int
      */
     public $height;
 
     /**
-     * @var integer
+     * @var int
      */
     public $width;
 

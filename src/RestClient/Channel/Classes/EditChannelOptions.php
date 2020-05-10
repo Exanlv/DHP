@@ -10,12 +10,12 @@ class EditChannelOptions
     public $name;
 
     /**
-     * @var integer
+     * @var int
      */
     public $type;
 
     /**
-     * @var integer
+     * @var int
      */
     public $position;
 
@@ -25,22 +25,22 @@ class EditChannelOptions
     public $nsfw;
 
     /**
-     * @var integer
+     * @var int
      */
     public $rate_limit_per_user;
 
     /**
-     * @var integer
+     * @var int
      */
     public $bitrate;
 
     /**
-     * @var integer
+     * @var int
      */
     public $user_limit;
 
     /**
-     * @var array
+     * @var PermissionOverwrite[]
      */
     public $permission_overwrites;
     
@@ -48,10 +48,4 @@ class EditChannelOptions
      * @var string
      */
     public $parent_id;
-
-    /**
-     * @todo
-     * 
-     * permission overwrites
-     */
 }

@@ -83,10 +83,15 @@ class Message
     /**
      * @var Attachment[]
      */
-    public $attachments;
+    public $attachments = [];
 
     /**
-     * @var integer|string
+     * @var Embed[]
+     */
+    public $embeds = [];
+
+    /**
+     * @var int|string
      */
     public $nonce;
 
@@ -158,6 +163,9 @@ class Message
 
         foreach ($data->attachments as $attachment_data)
             $this->attachments[] = $attachment_data;
+        
+        foreach ($data->embeds as $embed)
+            $this->embeds[] = new Embed($embed);
         
         if (property_exists($data, 'nonce'))
             $this->nonce = $data->nonce;

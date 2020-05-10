@@ -2,6 +2,8 @@
 require(__DIR__ . '/vendor/autoload.php');
 
 use DHP\Classes\Channel;
+use DHP\Classes\Embed;
+use DHP\Classes\EmbedField;
 use DHP\Classes\Message;
 use DHP\Client;
 use DHP\RestClient\Channel\Classes\EditChannelOptions;
@@ -22,6 +24,24 @@ $client->on('message', function (Message $message) {
             $edit->content = 'Pang!';
 
             $message->edit($edit);
+        });
+    }
+
+    if ($message->content === 'ping-embed') {
+        $reply = new SendMessageOptions();
+        $reply->embed = new Embed();
+
+        $reply->embed->author->name = $message->user->username;
+        $reply->embed->set_color_hex('0000FF');
+
+        $embed_field = new EmbedField();
+        $embed_field->name = 'Ping!';
+        $embed_field->value = 'Pong!';
+
+        $reply->embed->fields[] = $embed_field;
+
+        $message->reply($reply, function (Message $message) {
+            print_r($message);
         });
     }
 
