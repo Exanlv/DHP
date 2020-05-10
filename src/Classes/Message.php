@@ -227,4 +227,9 @@ class Message
     {
         $this->rest_client->channel_controller->pin_message($this->channel_id, $this->id, $callback);
     }
+
+    public function unpin(Closure $callback = null)
+    {
+        $this->rest_client->channel_controller->unpin_message($this->channel_id, $this->id, $callback);
+    }
 }

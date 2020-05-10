@@ -126,7 +126,7 @@ class Channel
 
         if (property_exists($data, 'permission_overwrites'))
             foreach ($data->permission_overwrites as $permission_overwrite)
-                $this->permission_overwrites[] = new PermissioOverwrite($permission_overwrite);
+                $this->permission_overwrites[] = new PermissionOverwrite($permission_overwrite);
 
         if (property_exists($data, 'name'))
             $this->name = $data->name;
@@ -177,5 +177,10 @@ class Channel
     public function delete(Closure $callback = null)
     {
         $this->rest_client->channel_controller->delete($this->id, $callback);
+    }
+
+    public function get_pinned_messages(Closure $callback)
+    {
+        $this->rest_client->channel_controller->get_pinned_messages($this->id, $callback);
     }
 }

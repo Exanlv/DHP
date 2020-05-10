@@ -26,6 +26,7 @@ class ChannelController
 
     /**
      * @param string $channel_id
+     * @param Closure $callback
      */
     public function get(string $channel_id, Closure $callback = null)
     {
@@ -43,6 +44,7 @@ class ChannelController
     /**
      * @param string $channel_id,
      * @param EditChannelOptions $options
+     * @param Closure $callback
      */
     public function edit(string $channel_id, EditChannelOptions $options, Closure $callback = null)
     {
@@ -63,6 +65,7 @@ class ChannelController
 
     /**
      * @param string $channel_id
+     * @param Closure $callback
      */
     public function delete(string $channel_id, Closure $callback = null)
     {
@@ -92,6 +95,7 @@ class ChannelController
     /**
      * @param string $channel_id
      * @param SendMessageOptions $options
+     * @param Closure $callback
      */
     public function send_message(string $channel_id, SendMessageOptions $options, Closure $callback = null)
     {
@@ -106,6 +110,12 @@ class ChannelController
         $this->rest_client->queue_request('post', $uri, $options, [], $uri, $final_callback);
     }
 
+    /**
+     * @param string $channel_id
+     * @param string $message_id
+     * @param EditMessageOptions $options
+     * @param Closure $callback
+     */
     public function edit_message(string $channel_id, string $message_id, EditMessageOptions $options, Closure $callback = null)
     {
         $rate_limit_key = 'channels/' . $channel_id . '/messages';
@@ -123,6 +133,7 @@ class ChannelController
     /**
      * @param string $channel_id
      * @param string $message_id
+     * @param Closure $callback
      */
     public function delete_message(string $channel_id, string $message_id, Closure $callback = null)
     {
@@ -243,15 +254,27 @@ class ChannelController
 
     /**
      * @param string $channel_id
+     * @param Closure $callback
      */
-    public function get_pinned_messages(string $channel_id)
+    public function get_pinned_messages(string $channel_id, Closure $callback)
     {
+        $uri = 'channels/' . $channel_id . '/pins';
 
+        $final_callback = $callback === null ? null : function ($data) use ($callback) {
+            $pinned_messages = array_map(function ($d) {
+                return new Message($d, $this->rest_client);
+            }, $data->data);
+
+            $callback($pinned_messages);
+        };
+
+        $this->rest_client->queue_request('get', $uri, null, [], $uri, $final_callback);
     }
 
     /**
      * @param string $channel_id
      * @param string $message_id
+     * @param Closure $callback
      */
     public function pin_message(string $channel_id, string $message_id, Closure $callback = null)
     {
@@ -263,7 +286,8 @@ class ChannelController
 
     /**
      * @param string $channel_id
-     * @param string $message_ids
+     * @param string $message_id
+     * @param Closure $callback
      */
     public function unpin_message(string $channel_id, string $message_id, Closure $callback = null)
     {

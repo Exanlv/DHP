@@ -2,7 +2,7 @@
 
 namespace DHP\Classes;
 
-class PermissioOverwrite
+class PermissionOverwrite
 {
     /**
      * @var id

@@ -106,7 +106,7 @@ class Client
      * @param array $data
      * @param array $headers
      * @param string $rate_limit_key
-     * @param function $callback
+     * @param Closure $callback
      * 
      * @return object
 
@@ -142,7 +142,6 @@ class Client
         $setopt = [
             CURLOPT_CUSTOMREQUEST => strtoupper($method),
             CURLOPT_RETURNTRANSFER => true,
-            
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HEADER => 1,
         ];

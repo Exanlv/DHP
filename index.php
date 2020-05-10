@@ -78,6 +78,25 @@ $client->on('message', function (Message $message) {
     if ($message->content === 'pin') {
         $message->pin();
     }
+
+    if ($message->content === 'unpin') {
+        $message->pin(function () use ($message) {
+            $message->unpin();
+        });
+    }
+
+    if ($message->content === 'get-pins') {
+        $message->channel(function (Channel $channel) {
+            $channel->get_pinned_messages(function (Array $messages) {
+                foreach ($messages as $pinned_message) {
+                    $reply = new SendMessageOptions();
+                    $reply->content = $pinned_message->id;
+                    
+                    $pinned_message->reply($reply);
+                }
+            });
+        });
+    }
 });
 
 $client->start_handling();
