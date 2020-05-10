@@ -253,17 +253,23 @@ class ChannelController
      * @param string $channel_id
      * @param string $message_id
      */
-    public function pin_message(string $channel_id, string $message_id)
+    public function pin_message(string $channel_id, string $message_id, Closure $callback = null)
     {
+        $rate_limit_key = 'channels/' . $channel_id . '/pins';
+        $uri = $rate_limit_key . '/' . $message_id;
 
+        $this->rest_client->queue_request('put', $uri, null, [], $rate_limit_key, $callback, '204');
     }
 
     /**
      * @param string $channel_id
      * @param string $message_ids
      */
-    public function unpin_message(string $channel_id, string $message_id)
+    public function unpin_message(string $channel_id, string $message_id, Closure $callback = null)
     {
+        $rate_limit_key = 'channels/' . $channel_id . '/pins';
+        $uri = $rate_limit_key . '/' . $message_id;
 
+        $this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback, '204');
     }
 }

@@ -74,6 +74,10 @@ $client->on('message', function (Message $message) {
             // $channel->delete();
         });
     }
+
+    if ($message->content === 'pin') {
+        $message->pin();
+    }
 });
 
 $client->start_handling();

@@ -78,7 +78,7 @@ class Client
         $res = $this->send_request($request->method, $request->uri, $request->data, $request->headers);
 
         if ($res->status !== $request->expected_response_code)
-            throw new DiscordAPIError(print_r($res, true));
+            throw new DiscordAPIError(print_r([$request, $res], true));
         
         if (property_exists($res->headers, 'x-ratelimit-bucket'))
             $this->last_requests[$rate_limit_key] = $res;
@@ -142,19 +142,35 @@ class Client
         $setopt = [
             CURLOPT_CUSTOMREQUEST => strtoupper($method),
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => array_merge(
-                [
-                    'Content-Type: application/json',
-                    'Authorization: Bot ' . $this->token
-                ],
-                $headers
-            ),
+            
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HEADER => 1,
         ];
 
+        $default_headers = [
+            'Content-Type: application/json',
+            'Authorization: Bot ' . $this->token,
+            'User-Agent: DiscordBot (https://github.com/Exanlv/DHP, pre-0.1)'
+        ];
+
         if ($data) {
-            $setopt[CURLOPT_POSTFIELDS] = json_encode($data);
+            $encoded_data = json_encode($data);
+            $setopt[CURLOPT_POSTFIELDS] = $encoded_data;
+            $setopt[CURLOPT_HTTPHEADER] = array_merge(
+                $default_headers,
+                $headers,
+                [
+                    'Content-Length: ' . strlen($encoded_data)
+                ]
+            );
+        } else {
+            $setopt[CURLOPT_HTTPHEADER] = array_merge(
+                $default_headers,
+                $headers,
+                [
+                    'Content-Length: 0'
+                ]
+            );
         }
 
         curl_setopt_array($req, $setopt);
@@ -188,7 +204,9 @@ class Client
 
         foreach ($data as $header) {
             preg_match('/^(.*?):(.*)$/', $header, $matches);
-            $headers[trim($matches[1])] = trim($matches[2]);
+
+            if (count($matches) === 3)
+                $headers[trim($matches[1])] = trim($matches[2]);
         }
 
         $formatted_data['headers'] = (object) $headers;
