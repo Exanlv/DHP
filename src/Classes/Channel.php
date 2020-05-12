@@ -3,6 +3,7 @@
 namespace DHP\Classes;
 
 use Closure;
+use DHP\RestClient\Channel\Classes\CreateChannelInviteOptions;
 use DHP\RestClient\Channel\Classes\EditChannelOptions;
 use DHP\RestClient\Client as RestClient;
 
@@ -108,6 +109,7 @@ class Channel
         $this->rest_client = &$rest_client;
 
         $this->id = $data->id;
+        
         $this->type = [
             'GUILD_TEXT',
             'DM',
@@ -182,5 +184,15 @@ class Channel
     public function get_pinned_messages(Closure $callback)
     {
         $this->rest_client->channel_controller->get_pinned_messages($this->id, $callback);
+    }
+
+    public function create_invite(CreateChannelInviteOptions $options, Closure $callback = null)
+    {
+        $this->rest_client->channel_controller->create_invite($this->id, $options, $callback);
+    }
+
+    public function get_invites(Closure $callback)
+    {
+        $this->rest_client->channel_controller->get_invites($this->id, $callback);
     }
 }

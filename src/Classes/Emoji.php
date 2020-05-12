@@ -9,7 +9,7 @@ class Emoji
     /**
      * @var RestClient
      */
-    public $rest_client;
+    private $rest_client;
 
     /**
      * @var string

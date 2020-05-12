@@ -3,6 +3,7 @@ namespace DHP\RestClient\Channel;
 
 use Closure;
 use DHP\Classes\Channel;
+use DHP\Classes\Invite;
 use DHP\Classes\Message;
 use DHP\RestClient\Channel\Classes\CreateChannelInviteOptions;
 use DHP\RestClient\Channel\Classes\EditChannelOptions;
@@ -222,10 +223,22 @@ class ChannelController
 
     /**
      * @param string $channel_id
+     * @param Closure $callback
      */
-    public function get_invites(string $channel_id)
+    public function get_invites(string $channel_id, Closure $callback = null)
     {
+        $uri = 'channels/' . $channel_id . '/invites';
 
+        $final_callback = $callback === null ? : function ($data) use ($callback) {
+            $invites = [];
+
+            foreach ($data->data as $invite)
+                $invites[] = new Invite($invite, $this->rest_client);
+        
+            $callback($invites);
+        };
+
+        $this->rest_client->queue_request('get', $uri, null, [], $uri, $final_callback);
     }
 
     /**
@@ -233,15 +246,21 @@ class ChannelController
      * @param CreateChannelInviteOptions $options
      * @param Closure $callback
      */
-    public function create_invite(string $channel_id, CreateChannelInviteOptions $options, Closure $callback)
+    public function create_invite(string $channel_id, CreateChannelInviteOptions $options, Closure $callback = null)
     {
         $uri = 'channels/' . $channel_id . '/invites';
 
         foreach ($options as $key => $value)
             if ($value === null)
                 unset($options->$key);
-
         
+        $final_callback = $callback === null ? null : function ($data) use ($callback) {
+            $invite = new Invite($data->data, $this->rest_client);
+
+            $callback($invite);
+        };
+
+        $this->rest_client->queue_request('post', $uri, $options, [], $uri, $final_callback);
     }
 
     /**

@@ -9,7 +9,7 @@ class Invite
     /**
      * @var RestClient
      */
-    public $rest_client;
+    private $rest_client;
 
     /**
      * @var string
@@ -60,7 +60,7 @@ class Invite
         if (property_exists($data, 'guild'));
             $this->guild = new Guild($data->guild, $this->rest_client);
         
-        $this->channel = new Channel($data, $this->rest_client);
+        $this->channel = new Channel($data->channel, $this->rest_client);
 
         if (property_exists($data, 'inviter'))
             $this->inviter = new User($data->inviter, $this->rest_client);

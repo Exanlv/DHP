@@ -4,8 +4,10 @@ require(__DIR__ . '/vendor/autoload.php');
 use DHP\Classes\Channel;
 use DHP\Classes\Embed;
 use DHP\Classes\EmbedField;
+use DHP\Classes\Invite;
 use DHP\Classes\Message;
 use DHP\Client;
+use DHP\RestClient\Channel\Classes\CreateChannelInviteOptions;
 use DHP\RestClient\Channel\Classes\EditChannelOptions;
 use DHP\RestClient\Channel\Classes\EditMessageOptions;
 use DHP\RestClient\Channel\Classes\SendMessageOptions;
@@ -94,6 +96,22 @@ $client->on('message', function (Message $message) {
                     
                     $pinned_message->reply($reply);
                 }
+            });
+        });
+    }
+
+    if ($message->content === 'invite') {
+        $message->channel(function (Channel $channel) {
+            $channel->create_invite(new CreateChannelInviteOptions(), function ($invite) {
+                print_r($invite);
+            });
+        });
+    }
+
+    if ($message->content === 'invites') {
+        $message->channel(function (Channel $channel) {
+            $channel->get_invites(function ($invites) {
+                print_r($invites);
             });
         });
     }
