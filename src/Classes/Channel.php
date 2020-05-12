@@ -151,7 +151,7 @@ class Channel
 
         if (property_exists($data, 'recipients'))
             foreach ($data->recipients as $user)
-                $this->recipients[] = new User($user);
+                $this->recipients[] = new User($user, $this->rest_client);
 
         if (property_exists($data, 'icon'))
             $this->icon = $data->icon;

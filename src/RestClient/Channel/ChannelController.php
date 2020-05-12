@@ -4,6 +4,7 @@ namespace DHP\RestClient\Channel;
 use Closure;
 use DHP\Classes\Channel;
 use DHP\Classes\Message;
+use DHP\RestClient\Channel\Classes\CreateChannelInviteOptions;
 use DHP\RestClient\Channel\Classes\EditChannelOptions;
 use DHP\RestClient\Channel\Classes\EditMessageOptions;
 use DHP\RestClient\Channel\Classes\Emoji;
@@ -229,10 +230,18 @@ class ChannelController
 
     /**
      * @param string $channel_id
+     * @param CreateChannelInviteOptions $options
+     * @param Closure $callback
      */
-    public function create_invite(string $channel_id)
+    public function create_invite(string $channel_id, CreateChannelInviteOptions $options, Closure $callback)
     {
+        $uri = 'channels/' . $channel_id . '/invites';
 
+        foreach ($options as $key => $value)
+            if ($value === null)
+                unset($options->$key);
+
+        
     }
 
     /**

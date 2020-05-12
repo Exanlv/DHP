@@ -139,7 +139,7 @@ class Message
         if (property_exists($data, 'guild_id'))
             $this->guild_id = $data->guild_id;
         
-        $this->user = new User($data->author);
+        $this->user = new User($data->author, $this->rest_client);
         
         if (property_exists($data, 'member'))
             $this->partial_member = new PartialMember($data->member);
@@ -152,7 +152,7 @@ class Message
         $this->mentioned_users = [];
 
         foreach ($data->mentions as $mentioned_user_data)
-            $this->mentioned_users[] = new MentionedUser($mentioned_user_data);
+            $this->mentioned_users[] = new MentionedUser($mentioned_user_data, $this->rest_client);
 
         $this->mentioned_roles = $data->mention_roles;
 

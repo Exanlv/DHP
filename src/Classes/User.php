@@ -1,8 +1,15 @@
 <?php
 namespace DHP\Classes;
 
+use DHP\RestClient\Client as RestClient;
+
 class User
 {
+    /**
+     * @var RestClient
+     */
+    private $rest_client;
+
     /**
      * @var string
      */
@@ -71,8 +78,10 @@ class User
     /**
      * @return void
      */
-    public function __construct($data)
+    public function __construct($data, RestClient &$rest_client)
     {
+        $this->rest_client = &$rest_client;
+
         $this->id = $data->id;
         $this->username = $data->username;
         $this->discriminator = $data->discriminator;

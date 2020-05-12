@@ -1,6 +1,7 @@
 <?php
 namespace DHP;
 
+use DHP\Classes\Guild;
 use DHP\Classes\Message;
 use DHP\RestClient\Channel\ChannelRestClient;
 use DHP\RestClient\Channel\Classes\SendMessageOptions;
@@ -40,6 +41,10 @@ class Client extends EventEmitter
 
         $this->minimal_client->on('MESSAGE_CREATE', function ($data) use (&$discord_client, &$rest_client) {
             $discord_client->emit('message', (new Message($data, $rest_client)));
+        });
+
+        $this->minimal_client->on('GUILD_CREATE', function ($data) {
+            print_r(new Guild($data, $this->rest_client));
         });
     }
 
