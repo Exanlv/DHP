@@ -12,6 +12,7 @@ use DHP\RestClient\Channel\Classes\Emoji;
 use DHP\RestClient\Channel\Classes\FetchMessagesOptions;
 use DHP\RestClient\Channel\Classes\SendMessageOptions;
 use DHP\RestClient\Client as RestClient;
+use DHP\RestClient\Error;
 
 class ChannelController
 {
@@ -34,10 +35,10 @@ class ChannelController
     {
         $uri = 'channels/' . $channel_id;
 
-        $final_callback = $callback === null ? null : function ($data) use ($callback) {
-            $channel = new Channel($data->data, $this->rest_client);
+        $final_callback = $callback === null ? null : function ($error, $data) use ($callback) {
+            $channel = $error === null ? new Channel($data->data, $this->rest_client) : null;
 
-            $callback($channel);
+            $callback($error, $channel);
         };
 
         $this->rest_client->queue_request('get', $uri, null, [], $uri, $final_callback);
@@ -52,10 +53,10 @@ class ChannelController
     {
         $uri = 'channels/' . $channel_id;
 
-        $final_callback = $callback === null ? null : function ($data) use ($callback) {
-            $channel = new Channel($data->data, $this->rest_client);
+        $final_callback = $callback === null ? null : function ($error, $data) use ($callback) {
+            $channel = $error === null ? new Channel($data->data, $this->rest_client) : null;
             
-            $callback($channel);
+            $callback($error, $channel);
         };
 
         foreach ($options as $key => $option)
@@ -103,10 +104,10 @@ class ChannelController
     {
         $uri = 'channels/' . $channel_id . '/messages';
 
-        $final_callback = $callback === null ? null : function ($response) use ($callback) {
-            $message = new Message($response->data, $this->rest_client);
+        $final_callback = $callback === null ? null : function ($error, $response) use ($callback) {
+            $message = $error === null ? new Message($response->data, $this->rest_client) : null;
 
-            $callback($message);
+            $callback($error, $message);
         };
 
         $this->rest_client->queue_request('post', $uri, $options, [], $uri, $final_callback);
@@ -123,10 +124,10 @@ class ChannelController
         $rate_limit_key = 'channels/' . $channel_id . '/messages';
         $uri = $rate_limit_key . '/' . $message_id;
 
-        $final_callback = $callback === null ? null : function ($response) use ($callback) {
-            $message = new Message($response->data, $this->rest_client);
+        $final_callback = $callback === null ? null : function ($error, $response) use ($callback) {
+            $message = $error === null ? new Message($response->data, $this->rest_client) : null;
 
-            $callback($message);
+            $callback($error, $message);
         };
 
         $this->rest_client->queue_request('patch', $uri, $options, [], $rate_limit_key, $final_callback);
@@ -229,13 +230,12 @@ class ChannelController
     {
         $uri = 'channels/' . $channel_id . '/invites';
 
-        $final_callback = $callback === null ? : function ($data) use ($callback) {
-            $invites = [];
+        $final_callback = $callback === null ? : function ($error, $data) use ($callback) {
+            $invites = $error === null ? array_map(function ($invite) {
+                return new Invite($invite, $this->rest_client);
+            }, $data->data) : null;
 
-            foreach ($data->data as $invite)
-                $invites[] = new Invite($invite, $this->rest_client);
-        
-            $callback($invites);
+            $callback($error, $invites);
         };
 
         $this->rest_client->queue_request('get', $uri, null, [], $uri, $final_callback);
@@ -254,10 +254,10 @@ class ChannelController
             if ($value === null)
                 unset($options->$key);
         
-        $final_callback = $callback === null ? null : function ($data) use ($callback) {
-            $invite = new Invite($data->data, $this->rest_client);
+        $final_callback = $callback === null ? null : function ($error, $data) use ($callback) {
+            $invite = $error === null ? new Invite($data->data, $this->rest_client) : null;
 
-            $callback($invite);
+            $callback($error, $invite);
         };
 
         $this->rest_client->queue_request('post', $uri, $options, [], $uri, $final_callback);
@@ -288,10 +288,10 @@ class ChannelController
     {
         $uri = 'channels/' . $channel_id . '/pins';
 
-        $final_callback = $callback === null ? null : function ($data) use ($callback) {
-            $pinned_messages = array_map(function ($d) {
+        $final_callback = $callback === null ? null : function ($error, $data) use ($callback) {
+            $pinned_messages = $error === null ? array_map(function ($d) {
                 return new Message($d, $this->rest_client);
-            }, $data->data);
+            }, $data->data) : null;
 
             $callback($pinned_messages);
         };

@@ -77,14 +77,14 @@ class Client
 
         $res = $this->send_request($request->method, $request->uri, $request->data, $request->headers);
 
-        if ($res->status !== $request->expected_response_code)
-            throw new DiscordAPIError(print_r([$request, $res], true));
+        $error = $res->status === $request->expected_response_code ?
+            null : new Error($res->status, $res->data);
         
         if (property_exists($res->headers, 'x-ratelimit-bucket'))
             $this->last_requests[$rate_limit_key] = $res;
 
         if ($request->callback !== null) {
-            ($request->callback)($res);
+            ($request->callback)($error, $res);
         }
     }
 

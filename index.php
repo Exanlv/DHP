@@ -11,6 +11,7 @@ use DHP\RestClient\Channel\Classes\CreateChannelInviteOptions;
 use DHP\RestClient\Channel\Classes\EditChannelOptions;
 use DHP\RestClient\Channel\Classes\EditMessageOptions;
 use DHP\RestClient\Channel\Classes\SendMessageOptions;
+use DHP\RestClient\Error;
 
 $token = trim(file_get_contents('.token'));
 
@@ -21,7 +22,10 @@ $client->on('message', function (Message $message) {
         $reply = new SendMessageOptions();
         $reply->content = 'Pong!';
 
-        $message->reply($reply, function (Message $message) {
+        $message->reply($reply, function ($err, $message) {
+            if ($err !== null)
+                print_r($err);
+
             $edit = new EditMessageOptions();
             $edit->content = 'Pang!';
 
@@ -42,19 +46,19 @@ $client->on('message', function (Message $message) {
 
         $reply->embed->fields[] = $embed_field;
 
-        $message->reply($reply, function (Message $message) {
+        $message->reply($reply, function ($err, $message) {
             print_r($message);
         });
     }
 
     if ($message->content === 'channel') {
-        $message->channel(function (Channel $channel) {
+        $message->channel(function ($err, $channel) {
             print_r($channel);
         });
     }
 
     if ($message->content === 'delete') {
-        $message->delete(function () use ($message) {
+        $message->delete(function ($err) use ($message) {
             $reply = new SendMessageOptions();
             $reply->content = 'Message deleted <o/';
             
@@ -63,7 +67,7 @@ $client->on('message', function (Message $message) {
     }
 
     if ($message->content === 'edit') {
-        $message->channel(function (Channel $channel) {
+        $message->channel(function ($err, $channel) {
             $edit = new EditChannelOptions();
             $edit->name = 'Test ' . mt_rand(10000, 99999);
 
@@ -72,7 +76,7 @@ $client->on('message', function (Message $message) {
     }
 
     if ($message->content === 'delete-channel') {
-        $message->channel(function (Channel $channel) {
+        $message->channel(function ($err, $channel) {
             // $channel->delete();
         });
     }
@@ -82,14 +86,14 @@ $client->on('message', function (Message $message) {
     }
 
     if ($message->content === 'unpin') {
-        $message->pin(function () use ($message) {
+        $message->pin(function ($err) use ($message) {
             $message->unpin();
         });
     }
 
     if ($message->content === 'get-pins') {
-        $message->channel(function (Channel $channel) {
-            $channel->get_pinned_messages(function (Array $messages) {
+        $message->channel(function ($err, $channel) {
+            $channel->get_pinned_messages(function ($err, $messages) {
                 foreach ($messages as $pinned_message) {
                     $reply = new SendMessageOptions();
                     $reply->content = $pinned_message->id;
@@ -101,16 +105,16 @@ $client->on('message', function (Message $message) {
     }
 
     if ($message->content === 'invite') {
-        $message->channel(function (Channel $channel) {
-            $channel->create_invite(new CreateChannelInviteOptions(), function ($invite) {
+        $message->channel(function ($err, $channel) {
+            $channel->create_invite(new CreateChannelInviteOptions(), function ($err, $invite) {
                 print_r($invite);
             });
         });
     }
 
     if ($message->content === 'invites') {
-        $message->channel(function (Channel $channel) {
-            $channel->get_invites(function ($invites) {
+        $message->channel(function ($err, $channel) {
+            $channel->get_invites(function ($err, $invites) {
                 print_r($invites);
             });
         });
