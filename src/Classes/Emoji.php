@@ -78,4 +78,9 @@ class Emoji
         if (property_exists($data, 'available'))
             $this->available = $data->available;
     }
+
+    public function url_identifier()
+    {
+        return urlencode($this->name . ':' . $this->id);
+    }
 }

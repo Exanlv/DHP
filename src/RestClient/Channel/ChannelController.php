@@ -3,13 +3,15 @@ namespace DHP\RestClient\Channel;
 
 use Closure;
 use DHP\Classes\Channel;
+use DHP\Classes\Emoji;
 use DHP\Classes\Invite;
 use DHP\Classes\Message;
+use DHP\Classes\User;
 use DHP\RestClient\Channel\Classes\CreateChannelInviteOptions;
 use DHP\RestClient\Channel\Classes\EditChannelOptions;
 use DHP\RestClient\Channel\Classes\EditMessageOptions;
-use DHP\RestClient\Channel\Classes\Emoji;
 use DHP\RestClient\Channel\Classes\FetchMessagesOptions;
+use DHP\RestClient\Channel\Classes\GetReactionsOptions;
 use DHP\RestClient\Channel\Classes\SendMessageOptions;
 use DHP\RestClient\Client as RestClient;
 use DHP\RestClient\Error;
@@ -80,19 +82,40 @@ class ChannelController
     /**
      * @param string $channel_id
      * @param FetchMessagesOptions $options
+     * @param Closure $callback
      */
-    public function fetch_messages(string $channel_id, FetchMessagesOptions $options)
+    public function fetch_messages(string $channel_id, FetchMessagesOptions $options, Closure $callback = null)
     {
+        $uri = 'channels/' . $channel_id;
 
+        $final_callback = $callback === null ? null : function ($error, $response) use ($callback) {
+            $messages = $error === null ? array_map(function ($msg) {
+                return new Message($msg, $this->rest_client);
+            }, $response->data) : null;
+        
+            $callback($error, $messages);
+        };
+
+        $this->rest_client->queue_request('get', $uri, $options, [], $uri, $final_callback);
     }
 
     /**
      * @param string $channel_id
      * @param string $message_id
+     * @param Closure $callback
      */
-    public function fetch_message(string $channel_id, string $message_id)
+    public function fetch_message(string $channel_id, string $message_id, Closure $callback = null)
     {
+        $rate_limit_key = 'channels/' . $channel_id;
+        $uri = $rate_limit_key . '/messages/' . $message_id;
 
+        $final_callback = $callback === null ? null : function ($error, $response) use ($callback) {            
+            $message = $error === null ? new Message($response->data, $this->rest_client): null;
+
+            $callback($error, $message);
+        };
+
+        $this->rest_client->queue_request('get', $uri, null, [], $uri);
     }
 
     /**
@@ -150,10 +173,43 @@ class ChannelController
      * @param string $channel_id
      * @param string $message_id
      * @param Emoji $emoji
+     * @param Closure $callback
      */
-    public function add_reaction(string $channel_id, string $message_id, Emoji $emoji)
+    public function add_reaction(string $channel_id, string $message_id, Emoji $emoji, $callback = null)
     {
+        $rate_limit_key = 'channels/' . $channel_id;
+        $uri = $rate_limit_key . '/messages/' . $message_id . '/reactions/' . $emoji->url_identifier();
 
+        $this->rest_client->queue_request('put', $uri, null, [], $rate_limit_key, $callback, '204');
+    }
+
+    /**
+     * @param string $channel_id
+     * @param string $message_id
+     * @param Emoji $emoji
+     * @param Closure $callback
+     */
+    public function delete_reaction(string $channel_id, string $message_id, Emoji $emoji, Closure $callback = null)
+    {
+        $rate_limit_key = 'channels/' . $channel_id;
+        $uri = $rate_limit_key . '/messages/' . $message_id . '/reactions/' . $emoji->url_identifier();
+
+        $this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback, '204');
+    }
+
+    /**
+     * @param string $channel_id
+     * @param string $message_id
+     * @param Emoji $emoji
+     * @param string $user_id
+     * @param Closure $callback
+     */
+    public function delete_user_reaction(string $channel_id, string $message_id, Emoji $emoji, string $user_id, Closure $callback = null)
+    {
+        $rate_limit_key = 'channels/' . $channel_id;
+        $uri = $rate_limit_key . '/messages/' . $message_id . '/reactions/' . $emoji->url_identifier() . '/' . $user_id;
+
+        $this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback, '204');
     }
 
     /**
@@ -161,47 +217,42 @@ class ChannelController
      * @param string $message_id
      * @param Emoji $emoji
      */
-    public function delete_reaction(string $channel_id, string $message_id, Emoji $emoji)
+    public function get_reactions(string $channel_id, string $message_id, Emoji $emoji, GetReactionsOptions $options, Closure $callback)
     {
+        $rate_limit_key = 'channels/' . $channel_id;
+        $uri = $rate_limit_key . '/messages/' . $message_id . '/reactions/' . $emoji->url_identifier();
 
-    }
+        $final_callback = $callback === null ? null : function ($error, $response) use ($callback) {
+            $users = $error === null ? array_map(function ($obj) {
+                return new User($obj, $this->rest_client);
+            }, $response->data) : null;
+        };
 
-    /**
-     * @param string $channel_id
-     * @param string $message_id
-     * @param Emoji $emoji
-     */
-    public function delete_user_reaction(string $channel_id, string $message_id, Emoji $emoji)
-    {
-
-    }
-
-    /**
-     * @param string $channel_id
-     * @param string $message_id
-     * @param Emoji $emoji
-     */
-    public function get_reactions(string $channel_id, string $message_id, Emoji $emoji)
-    {
-
+        $this->rest_client->queue_request('get', $uri, $options, [], $rate_limit_key, $final_callback);
     }
 
     /**
      * @param string $channel_id
      * @param string $message_id
      */
-    public function delete_all_reactions(string $channel_id, string $message_id)
+    public function delete_all_reactions(string $channel_id, string $message_id, Closure $callback = null)
     {
+        $rate_limit_key = 'channels/' . $channel_id;
+        $uri = $rate_limit_key . '/messages/' . $message_id . '/reactions';
 
+        $this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback);
     }
 
     /**
      * @param string $channel_id
      * @param string $message_id
      */
-    public function delete_all_reactions_of_type(string $channel_id, string $message_id)
+    public function delete_all_reactions_of_type(string $channel_id, string $message_id, Emoji $emoji, Closure $callback = null)
     {
+        $rate_limit_key = 'channels/' . $channel_id;
+        $uri = $rate_limit_key . '/messages/' . $message_id . '/reactions/' . $emoji->url_identifier();
 
+        $this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback);
     }
 
     /**
