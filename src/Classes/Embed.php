@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace DHP\Classes;
 
+use stdClass;
+
 class Embed
 {
 
@@ -36,7 +38,7 @@ class Embed
 	 */
 	public array $fields = [];
 
-	public function __construct($data = null)
+	public function __construct(?stdClass $data = null)
 	{
 		if ($data === null) {
 			$this->footer = new EmbedFooter();

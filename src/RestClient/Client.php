@@ -102,7 +102,7 @@ class Client
 	 * @param string $rate_limit_key
 	 * @param \Closure $callback
 	 */
-	public function queue_request(string $method, string $uri, ?array $data = null, array $headers = [], string $rate_limit_key, ?Closure $callback = null, $expected_response_code = '200')
+	public function queue_request(string $method, string $uri, ?array $data = null, array $headers = [], string $rate_limit_key, ?Closure $callback = null, $expected_response_code = '200'): void
 	{
 		if (!isset($this->request_queue[$rate_limit_key]))
 			$this->request_queue[$rate_limit_key] = [];

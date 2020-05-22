@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace DHP\Classes;
 
 use DHP\RestClient\Client as RestClient;
+use stdClass;
 
 class Emoji
 {
@@ -30,7 +31,7 @@ class Emoji
 
 	public bool $available;
 
-	public function __construct($data, RestClient &$rest_client)
+	public function __construct(stdClass $data, RestClient &$rest_client)
 	{
 		$this->rest_client = &$rest_client;
 
@@ -58,7 +59,7 @@ class Emoji
 			$this->available = $data->available;
 	}
 
-	public function url_identifier()
+	public function url_identifier(): string
 	{
 		return urlencode($this->name . ':' . $this->id);
 	}

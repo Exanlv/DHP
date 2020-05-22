@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace DHP\Classes;
 
 use DHP\RestClient\Client as RestClient;
+use stdClass;
 
 class Invite
 {
@@ -27,7 +28,7 @@ class Invite
 
 	public int $approximate_member_count;
 
-	public function __construct($data, RestClient &$rest_client)
+	public function __construct(stdClass $data, RestClient &$rest_client)
 	{
 		$this->rest_client = &$rest_client;
 

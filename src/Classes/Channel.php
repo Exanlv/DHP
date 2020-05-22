@@ -8,6 +8,7 @@ use Closure;
 use DHP\RestClient\Channel\Classes\CreateChannelInviteOptions;
 use DHP\RestClient\Channel\Classes\EditChannelOptions;
 use DHP\RestClient\Client as RestClient;
+use stdClass;
 
 class Channel
 {
@@ -56,7 +57,7 @@ class Channel
 
 	public string $last_pin_timestamp;
 
-	public function __construct($data, RestClient &$rest_client)
+	public function __construct(stdClass $data, RestClient &$rest_client)
 	{
 		$this->rest_client = &$rest_client;
 

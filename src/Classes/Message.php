@@ -10,6 +10,7 @@ use DHP\RestClient\Channel\Classes\SendMessageOptions;
 use DHP\RestClient\Client as RestClient;
 use DateTime;
 use DateTimeZone;
+use stdClass;
 
 class Message
 {
@@ -72,19 +73,7 @@ class Message
 
 	private RestClient $rest_client;
 
-	/**
-	 * @todo
-	 *  - embeds
-	 *  - reactions?
-	 *  - activity?
-	 *  - application?
-	 *  - message_reference?
-	 *  - flags?
-	 *  - webhook user
-	 *  - type enum
-	 */
-
-	public function __construct($data, RestClient &$rest_client)
+	public function __construct(stdClass $data, RestClient &$rest_client)
 	{
 		$this->rest_client = &$rest_client;
 
@@ -191,3 +180,15 @@ class Message
 	}
 
 }
+
+/**
+ * @todo
+ *  - embeds
+ *  - reactions?
+ *  - activity?
+ *  - application?
+ *  - message_reference?
+ *  - flags?
+ *  - webhook user
+ *  - type enum
+ */

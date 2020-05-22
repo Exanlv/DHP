@@ -14,5 +14,8 @@
     },
     "require-dev": {
         "consistence/coding-standard": "^3.10"
+    },
+    "scripts": {
+        "lint": "vendor/bin/phpcbf --standard=ruleset.xml --extensions=php --encoding=utf-8 -sp src; vendor/bin/phpcs --standard=ruleset.xml --extensions=php --encoding=utf-8 -sp src"
     }
 }

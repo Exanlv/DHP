@@ -6,6 +6,7 @@ namespace DHP\Classes;
 
 use DateTime;
 use DateTimeZone;
+use stdClass;
 
 class PartialMember
 {
@@ -13,7 +14,7 @@ class PartialMember
 	public string $nickname;
 
 	/**
-	 * @var array
+	 * @var \DHP\Classes\Role[]
 	 */
 	public array $roles;
 
@@ -25,7 +26,7 @@ class PartialMember
 
 	public bool $mute;
 
-	public function __construct($data)
+	public function __construct(stdClass $data)
 	{
 		$utc_time_zone = new DateTimeZone('UTC');
 

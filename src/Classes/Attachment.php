@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace DHP\Classes;
 
+use stdClass;
+
 class Attachment
 {
 
@@ -21,7 +23,7 @@ class Attachment
 
 	public int $width;
 
-	public function __construct($data)
+	public function __construct(stdClass $data)
 	{
 		$this->id = $data->id;
 		$this->filename = $data->filename;

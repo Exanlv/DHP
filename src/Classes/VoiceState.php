@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace DHP\Classes;
 
+use stdClass;
+
 class VoiceState
 {
 
@@ -27,7 +29,7 @@ class VoiceState
 
 	public string $suppress;
 
-	public function __construct($data)
+	public function __construct(stdClass $data)
 	{
 		if (property_exists($data, 'guild_id'))
 			$this->guild_id = $data->guild_id;

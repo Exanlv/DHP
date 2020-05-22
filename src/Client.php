@@ -15,7 +15,7 @@ class Client extends \EventEmitter\EventEmitter
 
 	private RestClient $rest_client;
 
-	public function __construct($token)
+	public function __construct(string $token)
 	{
 		$this->minimal_client = new MinimalDiscordClient($token);
 

@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace DHP\Classes;
 
+use stdClass;
+
 class EmbedVideo
 {
 
@@ -13,7 +15,7 @@ class EmbedVideo
 
 	public int $width;
 
-	public function __construct($data = null)
+	public function __construct(?stdClass $data = null)
 	{
 		if ($data !== null) {
 			if (property_exists($data, 'url'))

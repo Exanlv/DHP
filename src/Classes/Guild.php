@@ -6,6 +6,7 @@ namespace DHP\Classes;
 
 use DHP\RestClient\Client as RestClient;
 use DateTime;
+use stdClass;
 
 class Guild
 {
@@ -123,7 +124,7 @@ class Guild
 
 	public int $approximate_presence_count;
 
-	public function __construct($data = null, RestClient &$rest_client)
+	public function __construct(?stdClass $data = null, RestClient &$rest_client)
 	{
 		$this->rest_client = &$rest_client;
 

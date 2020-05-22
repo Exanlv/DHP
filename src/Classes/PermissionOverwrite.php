@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace DHP\Classes;
 
+use stdClass;
+
 class PermissionOverwrite
 {
 
@@ -15,7 +17,7 @@ class PermissionOverwrite
 
 	public int $deny;
 
-	public function __construct($data)
+	public function __construct(stdClass $data)
 	{
 		$this->id = $data->id;
 		$this->type = $data->type;

@@ -7,6 +7,7 @@ namespace DHP\Classes;
 use DHP\RestClient\Client as RestClient;
 use DateTime;
 use DateTimeZone;
+use stdClass;
 
 class Member
 {
@@ -30,7 +31,7 @@ class Member
 
 	public bool $mute;
 
-	public function __construct($data, RestClient &$rest_client)
+	public function __construct(stdClass $data, RestClient &$rest_client)
 	{
 		$this->rest_client = &$rest_client;
 
