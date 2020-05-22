@@ -1,235 +1,193 @@
 <?php
+
+declare(strict_types = 1);
+
 namespace DHP\Classes;
 
 use Closure;
-use DHP\Classes\User;
-use DHP\Classes\PartialMember;
-use DHP\Classes\Attachment;
-use DHP\Classes\MentionedUser;
-
-use DateTime;
-use DateTimeZone;
 use DHP\RestClient\Channel\Classes\EditMessageOptions;
 use DHP\RestClient\Channel\Classes\SendMessageOptions;
 use DHP\RestClient\Client as RestClient;
+use DateTime;
+use DateTimeZone;
 
 class Message
 {
-    /**
-     * @var string
-     */
-    public $id;
 
-    /**
-     * @var string
-     */
-    public $channel_id;
+	public string $id;
 
-    /**
-     * @var string
-     */
-    public $guild_id;
+	public string $channel_id;
 
-    /**
-     * @var User
-     */
-    public $user;
-    
-    /**
-     * @var PartialMember
-     */
-    public $partial_member;
+	public string $guild_id;
 
-    /**
-     * @var string
-     */
-    public $content;
+	public User $user;
 
-    /**
-     * @var DateTime
-     */
-    public $sent_at;
+	public PartialMember $partial_member;
 
-    /**
-     * @var DateTime
-     */
-    public $edited_at;
-    
-    /**
-     * @var boolean
-     */
-    public $tts;
+	public string $content;
 
-    /**
-     * @var boolean
-     */
-    public $mentioned_everyone;
+	public DateTime $sent_at;
 
-    /**
-     * @var MentionedUser[]
-     */
-    public $mentioned_users;
+	public DateTime $edited_at;
 
-    /**
-     * @var string[]
-     */
-    public $mentioned_roles;
+	public bool $tts;
 
-    /**
-     * @var string[]
-     */
-    public $mentioned_channels;
+	public bool $mentioned_everyone;
 
-    /**
-     * @var Attachment[]
-     */
-    public $attachments = [];
+	/**
+	 * @var \DHP\Classes\MentionedUser[]
+	 */
+	public array $mentioned_users;
 
-    /**
-     * @var Embed[]
-     */
-    public $embeds = [];
+	/**
+	 * @var string[]
+	 */
+	public array $mentioned_roles;
 
-    /**
-     * @var int|string
-     */
-    public $nonce;
+	/**
+	 * @var string[]
+	 */
+	public array $mentioned_channels;
 
-    /**
-     * @var boolean
-     */
-    public $pinned;
+	/**
+	 * @var \DHP\Classes\Attachment[]
+	 */
+	public array $attachments = [];
 
-    /**
-     * @var string
-     */
-    public $webhook_id;
+	/**
+	 * @var \DHP\Classes\Embed[]
+	 */
+	public array $embeds = [];
 
-    /**
-     * @var string
-     */
-    public $type;
+	/**
+	 * @var int|string
+	 */
+	public $nonce;
 
-    /**
-     * @var RestClient
-     */
-    private $rest_client;
+	public bool $pinned;
 
-    /**
-     * @todo
-     *  - embeds
-     *  - reactions?
-     *  - activity?
-     *  - application?
-     *  - message_reference?
-     *  - flags?
-     *  - webhook user
-     *  - type enum
-     */
+	public string $webhook_id;
 
-    public function __construct($data, RestClient &$rest_client)
-    {
-        $this->rest_client = &$rest_client;
+	public string $type;
 
-        $utc_date_time_zone = new DateTimeZone('UTC');
+	private RestClient $rest_client;
 
-        $this->id = $data->id;
-        $this->channel_id = $data->channel_id;
-        
-        if (property_exists($data, 'guild_id'))
-            $this->guild_id = $data->guild_id;
-        
-        $this->user = new User($data->author, $this->rest_client);
-        
-        if (property_exists($data, 'member'))
-            $this->partial_member = new PartialMember($data->member);
-        
-        $this->content = $data->content;
-        $this->sent_at = new DateTime($data->timestamp, $utc_date_time_zone);
-        $this->edited_at = new DateTime($data->edited_timestamp, $utc_date_time_zone);
-        $this->tts = $data->tts;
-        $this->mentioned_everyone = $data->mention_everyone;
-        $this->mentioned_users = [];
+	/**
+	 * @todo
+	 *  - embeds
+	 *  - reactions?
+	 *  - activity?
+	 *  - application?
+	 *  - message_reference?
+	 *  - flags?
+	 *  - webhook user
+	 *  - type enum
+	 */
 
-        foreach ($data->mentions as $mentioned_user_data)
-            $this->mentioned_users[] = new MentionedUser($mentioned_user_data, $this->rest_client);
+	public function __construct($data, RestClient &$rest_client)
+	{
+		$this->rest_client = &$rest_client;
 
-        $this->mentioned_roles = $data->mention_roles;
+		$utc_date_time_zone = new DateTimeZone('UTC');
 
-        if (property_exists($data, 'mention_channels'))
-            $this->mentioned_channels = $data->mention_channels;
+		$this->id = $data->id;
+		$this->channel_id = $data->channel_id;
 
-        $this->attachments = [];
+		if (property_exists($data, 'guild_id'))
+			$this->guild_id = $data->guild_id;
 
-        foreach ($data->attachments as $attachment_data)
-            $this->attachments[] = $attachment_data;
-        
-        foreach ($data->embeds as $embed)
-            $this->embeds[] = new Embed($embed);
-        
-        if (property_exists($data, 'nonce'))
-            $this->nonce = $data->nonce;
-        
-        $this->pinned = $data->pinned;
+		$this->user = new User($data->author, $this->rest_client);
 
-        if (property_exists($data, 'webhook_id'))
-            $this->webhook_id = $data->webhook_id;
-        
-        $this->type = [
-            'DEFAULT',
-            'RECIPIENT_ADD',
-            'RECIPIENT_REMOVE',
-            'CALL',
-            'CHANNEL_NAME_CHANGE',
-            'CHANNEL_ICON_CHANGE',
-            'CHANNEL_PINNED_MESSAGE',
-            'GUILD_MEMBER_JOIN',
-            'USER_PREMIUM_GUILD_SUBSCRIPTION',
-            'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1',
-            'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2',
-            'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3',
-            'CHANNEL_FOLLOW_ADD',
-            'GUILD_DISCOVERY_DISQUALIFIED',
-            'GUILD_DISCOVERY_REQUALIFIED',
-        ][$data->type];
-    }
+		if (property_exists($data, 'member'))
+			$this->partial_member = new PartialMember($data->member);
 
-    public function reply(SendMessageOptions $options, Closure $callback = null)
-    {
-        $this->rest_client->channel_controller->send_message(
-            $this->channel_id,
-            $options,
-            $callback
-        );
-    }
+		$this->content = $data->content;
+		$this->sent_at = new DateTime($data->timestamp, $utc_date_time_zone);
+		$this->edited_at = new DateTime($data->edited_timestamp, $utc_date_time_zone);
+		$this->tts = $data->tts;
+		$this->mentioned_everyone = $data->mention_everyone;
+		$this->mentioned_users = [];
 
-    public function edit(EditMessageOptions $options, Closure $callback = null)
-    {
-        $this->rest_client->channel_controller->edit_message(
-            $this->channel_id,
-            $this->id,
-            $options,
-            $callback
-        );
-    }
+		foreach ($data->mentions as $mentioned_user_data)
+			$this->mentioned_users[] = new MentionedUser($mentioned_user_data, $this->rest_client);
 
-    public function channel(Closure $callback)
-    {
-        $this->rest_client->channel_controller->get($this->channel_id, $callback);
-    }
+		$this->mentioned_roles = $data->mention_roles;
 
-    public function delete(Closure $callback = null)
-    {
-        $this->rest_client->channel_controller->delete_message($this->channel_id, $this->id, $callback);
-    }
+		if (property_exists($data, 'mention_channels'))
+			$this->mentioned_channels = $data->mention_channels;
 
-    public function pin(Closure $callback = null)
-    {
-        $this->rest_client->channel_controller->pin_message($this->channel_id, $this->id, $callback);
-    }
+		$this->attachments = [];
 
-    public function unpin(Closure $callback = null)
-    {
-        $this->rest_client->channel_controller->unpin_message($this->channel_id, $this->id, $callback);
-    }
+		foreach ($data->attachments as $attachment_data)
+			$this->attachments[] = $attachment_data;
+
+		foreach ($data->embeds as $embed)
+			$this->embeds[] = new Embed($embed);
+
+		if (property_exists($data, 'nonce'))
+			$this->nonce = $data->nonce;
+
+		$this->pinned = $data->pinned;
+
+		if (property_exists($data, 'webhook_id'))
+			$this->webhook_id = $data->webhook_id;
+
+		$this->type = [
+			'DEFAULT',
+			'RECIPIENT_ADD',
+			'RECIPIENT_REMOVE',
+			'CALL',
+			'CHANNEL_NAME_CHANGE',
+			'CHANNEL_ICON_CHANGE',
+			'CHANNEL_PINNED_MESSAGE',
+			'GUILD_MEMBER_JOIN',
+			'USER_PREMIUM_GUILD_SUBSCRIPTION',
+			'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1',
+			'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2',
+			'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3',
+			'CHANNEL_FOLLOW_ADD',
+			'GUILD_DISCOVERY_DISQUALIFIED',
+			'GUILD_DISCOVERY_REQUALIFIED',
+		][$data->type];
+	}
+
+	public function reply(SendMessageOptions $options, ?Closure $callback = null): void
+	{
+		$this->rest_client->channel_controller->send_message(
+			$this->channel_id,
+			$options,
+			$callback
+		);
+	}
+
+	public function edit(EditMessageOptions $options, ?Closure $callback = null): void
+	{
+		$this->rest_client->channel_controller->edit_message(
+			$this->channel_id,
+			$this->id,
+			$options,
+			$callback
+		);
+	}
+
+	public function channel(Closure $callback): void
+	{
+		$this->rest_client->channel_controller->get($this->channel_id, $callback);
+	}
+
+	public function delete(?Closure $callback = null): void
+	{
+		$this->rest_client->channel_controller->delete_message($this->channel_id, $this->id, $callback);
+	}
+
+	public function pin(?Closure $callback = null): void
+	{
+		$this->rest_client->channel_controller->pin_message($this->channel_id, $this->id, $callback);
+	}
+
+	public function unpin(?Closure $callback = null): void
+	{
+		$this->rest_client->channel_controller->unpin_message($this->channel_id, $this->id, $callback);
+	}
+
 }

@@ -1,28 +1,23 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\RestClient\Channel\Classes;
 
 class EditMessageOptions
 {
-    /**
-     * @var string
-     */
-    public $content;
-    
-    /**
-     * @var any
-     */
-    public $embed;
 
-    /**
-     * @var any
-     */
-    public $flags;
+	public string $content;
 
-    /**
-     * @todo
-     * 
-     * embed
-     * flags
-     */
+	public any $embed;
+
+	public any $flags;
+
+	/**
+	 * @todo
+	 *
+	 * embed
+	 * flags
+	 */
+
 }

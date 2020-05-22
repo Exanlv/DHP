@@ -1,43 +1,35 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\Classes;
 
 class EmbedThumbnail
 {
-    /**
-     * @var string
-     */
-    public $url;
 
-    /**
-     * @var string
-     */
-    public $proxy_url;
+	public string $url;
 
-    /**
-     * @var int
-     */
-    public $height;
+	public string $proxy_url;
 
-    /**
-     * @var int
-     */
-    public $width;
+	public int $height;
 
-    public function __construct($data = null)
-    {
-        if ($data !== null) {
-            if (property_exists($data, 'url'))
-                $this->url = $data->url;
+	public int $width;
 
-            if (property_exists($data, 'proxy_url'))
-                $this->proxy_url = $data->proxy_url;
+	public function __construct($data = null)
+	{
+		if ($data !== null) {
+			if (property_exists($data, 'url'))
+				$this->url = $data->url;
 
-            if (property_exists($data, 'width'))
-                $this->width = $data->width;
-        
-            if (property_exists($data, 'height'))
-                $this->height = $data->height;
-        }
-    }
+			if (property_exists($data, 'proxy_url'))
+				$this->proxy_url = $data->proxy_url;
+
+			if (property_exists($data, 'width'))
+				$this->width = $data->width;
+
+			if (property_exists($data, 'height'))
+				$this->height = $data->height;
+		}
+	}
+
 }

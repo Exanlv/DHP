@@ -1,80 +1,57 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\Classes;
 
 use DHP\RestClient\Client as RestClient;
 
 class Invite
 {
-    /**
-     * @var RestClient
-     */
-    private $rest_client;
 
-    /**
-     * @var string
-     */
-    public $code;
+	private RestClient $rest_client;
 
-    /**
-     * @var Guild
-     */
-    public $guild;
+	public string $code;
 
-    /**
-     * @var PartialChannel
-     */
-    public $channel;
+	public Guild $guild;
 
-    /**
-     * @var User
-     */
-    public $inviter;
+	public PartialChannel $channel;
 
-    /**
-     * @var PartialUser
-     */
-    public $target_user;
+	public User $inviter;
 
-    /**
-     * @var int
-     */
-    public $target_user_type;
+	public PartialUser $target_user;
 
-    /**
-     * @var int
-     */
-    public $approximate_presence_count;
-    
-    /**
-     * @var int
-     */
-    public $approximate_member_count;
+	public int $target_user_type;
 
-    public function __construct($data, RestClient &$rest_client)
-    {
-        $this->rest_client = &$rest_client;
+	public int $approximate_presence_count;
 
-        $this->code = $data->code;
+	public int $approximate_member_count;
 
-        if (property_exists($data, 'guild'));
-            $this->guild = new Guild($data->guild, $this->rest_client);
-        
-        $this->channel = new Channel($data->channel, $this->rest_client);
+	public function __construct($data, RestClient &$rest_client)
+	{
+		$this->rest_client = &$rest_client;
 
-        if (property_exists($data, 'inviter'))
-            $this->inviter = new User($data->inviter, $this->rest_client);
-        
-        if (property_exists($data, 'target_user'))
-            $this->target_user = new User($data->target_user, $this->rest_client);
+		$this->code = $data->code;
 
-        if (property_exists($data, 'target_user_type'))
-            $this->target_user_type = $data->target_user_type;
+		if (property_exists($data, 'guild'));
+			$this->guild = new Guild($data->guild, $this->rest_client);
 
-        if (property_exists($data, 'approximate_presence_count'))
-            $this->approximate_presence_count = $data->approximate_presence_count;
+		$this->channel = new Channel($data->channel, $this->rest_client);
 
-        if (property_exists($data, 'approximate_member_count'))
-            $this->approximate_member_count = $data->approximate_member_count;
-    }
+		if (property_exists($data, 'inviter'))
+			$this->inviter = new User($data->inviter, $this->rest_client);
+
+		if (property_exists($data, 'target_user'))
+			$this->target_user = new User($data->target_user, $this->rest_client);
+
+		if (property_exists($data, 'target_user_type'))
+			$this->target_user_type = $data->target_user_type;
+
+		if (property_exists($data, 'approximate_presence_count'))
+			$this->approximate_presence_count = $data->approximate_presence_count;
+
+		if (property_exists($data, 'approximate_member_count'))
+			$this->approximate_member_count = $data->approximate_member_count;
+	}
+
 }

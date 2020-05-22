@@ -1,86 +1,66 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\Classes;
 
 use DHP\RestClient\Client as RestClient;
 
 class Emoji
 {
-    /**
-     * @var RestClient
-     */
-    private $rest_client;
 
-    /**
-     * @var string
-     */
-    public $id;
+	private RestClient $rest_client;
 
-    /**
-     * @var string
-     */
-    public $name;
+	public string $id;
 
-    /**
-     * @var Role[]
-     */
-    public $roles;
+	public string $name;
 
-    /**
-     * @var User
-     */
-    public $user;
+	/**
+	 * @var \DHP\Classes\Role[]
+	 */
+	public array $roles;
 
-    /**
-     * @var boolean
-     */
-    public $require_colons;
+	public User $user;
 
-    /**
-     * @var boolean
-     */
-    public $managed;
+	public bool $require_colons;
 
-    /**
-     * @var boolean
-     */
-    public $animated;
+	public bool $managed;
 
-    /**
-     * @var boolean
-     */
-    public $available;
+	public bool $animated;
 
-    public function __construct($data, RestClient &$rest_client)
-    {
-        $this->rest_client = &$rest_client;
+	public bool $available;
 
-        $this->id = $data->id;
+	public function __construct($data, RestClient &$rest_client)
+	{
+		$this->rest_client = &$rest_client;
 
-        $this->name = $data->name;
+		$this->id = $data->id;
 
-        if (property_exists($data, 'roles'))
-            foreach ($data->roles as $role)
-                $this->roles[] = new Role($role, $this->rest_client);
+		$this->name = $data->name;
 
-        if (property_exists($data, 'user'))
-            $this->user = new User($data->user, $this->rest_client);
+		if (property_exists($data, 'roles'))
+			foreach ($data->roles as $role)
+				$this->roles[] = new Role($role, $this->rest_client);
 
-        if (property_exists($data, 'require_colons'))
-            $this->require_colons = $data->require_colons;
+		if (property_exists($data, 'user'))
+			$this->user = new User($data->user, $this->rest_client);
 
-        if (property_exists($data, 'managed'))
-            $this->managed = $data->managed;
+		if (property_exists($data, 'require_colons'))
+			$this->require_colons = $data->require_colons;
 
-        if (property_exists($data, 'animated'))
-            $this->animated = $data->animated;
+		if (property_exists($data, 'managed'))
+			$this->managed = $data->managed;
 
-        if (property_exists($data, 'available'))
-            $this->available = $data->available;
-    }
+		if (property_exists($data, 'animated'))
+			$this->animated = $data->animated;
 
-    public function url_identifier()
-    {
-        return urlencode($this->name . ':' . $this->id);
-    }
+		if (property_exists($data, 'available'))
+			$this->available = $data->available;
+	}
+
+	public function url_identifier()
+	{
+		return urlencode($this->name . ':' . $this->id);
+	}
+
 }

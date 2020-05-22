@@ -1,117 +1,89 @@
 <?php
+
+declare(strict_types = 1);
+
 namespace DHP\Classes;
 
 use DHP\RestClient\Client as RestClient;
 
 class User
 {
-    /**
-     * @var RestClient
-     */
-    private $rest_client;
 
-    /**
-     * @var string
-     */
-    public $id;
+	private RestClient $rest_client;
 
-    /**
-     * @var string
-     */
-    public $username;
+	public string $id;
 
-    /**
-     * @var string
-     */
-    public $discriminator;
+	public string $username;
 
-    /**
-     * @var string
-     */
-    public $avatar_hash;
+	public string $discriminator;
 
-    /**
-     * @var boolean
-     */
-    public $bot;
+	public string $avatar_hash;
 
-    /**
-     * @var boolean
-     */
-    public $system;
+	public bool $bot;
 
-    /**
-     * @var boolean;
-     */
-    public $two_factor_auth;
+	public bool $system;
 
-    /**
-     * @var boolean;
-     */
-    public $verified_email;
+	/**
+	 * @var bool ;
+	 */
+	public bool $two_factor_auth;
 
-    /**
-     * @var string
-     */
-    public $locale;
+	/**
+	 * @var bool ;
+	 */
+	public bool $verified_email;
 
-    /**
-     * @var string;
-     */
-    public $email;
+	public string $locale;
 
-    /**
-     * @var int
-     */
-    public $flags;
+	/**
+	 * @var string;
+	 */
+	public string $email;
 
-    /**
-     * @var int
-     */
-    public $public_flags;
+	public int $flags;
 
-    /**
-     * @var int
-     */
-    public $premium_type;
+	public int $public_flags;
 
-    /**
-     * @return void
-     */
-    public function __construct($data, RestClient &$rest_client)
-    {
-        $this->rest_client = &$rest_client;
+	public int $premium_type;
 
-        $this->id = $data->id;
-        $this->username = $data->username;
-        $this->discriminator = $data->discriminator;
-        $this->avatar = $data->avatar;
+	/**
+	 * @return void
+	 */
+	public function __construct($data, RestClient &$rest_client)
+	{
+		$this->rest_client = &$rest_client;
 
-        if (property_exists($data, 'bot'))
-            $this->bot = $data->bot;
-        
-        if (property_exists($data, 'system'))
-            $this->system = $data->system;
+		$this->id = $data->id;
+		$this->username = $data->username;
+		$this->discriminator = $data->discriminator;
+		$this->avatar = $data->avatar;
 
-        if (property_exists($data, 'mfa_enabled'))
-            $this->two_factor_auth = $data->mfa_enabled;
+		if (property_exists($data, 'bot'))
+			$this->bot = $data->bot;
 
-        if (property_exists($data, 'locale'))
-            $this->locale = $data->locale;
+		if (property_exists($data, 'system'))
+			$this->system = $data->system;
 
-        if (property_exists($data, 'verified'))
-            $this->verified_email = $data->verified;
+		if (property_exists($data, 'mfa_enabled'))
+			$this->two_factor_auth = $data->mfa_enabled;
 
-        if (property_exists($data, 'email'))
-            $this->email = $data->email;
+		if (property_exists($data, 'locale'))
+			$this->locale = $data->locale;
 
-        if (property_exists($data, 'flags'))
-            $this->flags = $data->flags;
+		if (property_exists($data, 'verified'))
+			$this->verified_email = $data->verified;
 
-        if (property_exists($data, 'premium_type'))
-            $this->premium_type = $data->premium_type;
+		if (property_exists($data, 'email'))
+			$this->email = $data->email;
 
-        if (property_exists($data, 'public_flags'))
-            $this->public_flags = $data->public_flags;
-    }
+		if (property_exists($data, 'flags'))
+			$this->flags = $data->flags;
+
+		if (property_exists($data, 'premium_type'))
+			$this->premium_type = $data->premium_type;
+
+		if (property_exists($data, 'public_flags'))
+			$this->public_flags = $data->public_flags;
+	}
+
 }

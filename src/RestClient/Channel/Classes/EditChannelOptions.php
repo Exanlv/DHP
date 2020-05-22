@@ -22,7 +22,7 @@ class EditChannelOptions
 	public int $user_limit;
 
 	/**
-	 * @var PermissionOverwrite[] public $permission_overwrites
+	 * @var \DHP\RestClient\Channel\Classes\PermissionOverwrite[] public $permission_overwrites
 	 */
 	public array $permission_overwrites;
 

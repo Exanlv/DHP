@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 namespace DHP\Classes;
 
 use DateTime;
@@ -6,50 +9,37 @@ use DateTimeZone;
 
 class PartialMember
 {
-    /**
-     * @var string
-     */
-    public $nickname;
 
-    /**
-     * @var array
-     */
-    public $roles;
+	public string $nickname;
 
-    /**
-     * @var DateTime
-     */
-    public $joined_at;
+	/**
+	 * @var array
+	 */
+	public array $roles;
 
-    /**
-     * @var DateTime
-     */
-    public $premium_since;
+	public DateTime $joined_at;
 
-    /**
-     * @var boolean
-     */
-    public $deaf;
+	public DateTime $premium_since;
 
-    /**
-     * @var boolean
-     */
-    public $mute;
+	public bool $deaf;
 
-    public function __construct($data)
-    {
-        $utc_time_zone = new DateTimeZone('UTC');
+	public bool $mute;
 
-        if (property_exists($data, 'nick'))
-            $this->nickname = $data->nick;
-            
-        $this->roles = $data->roles;
-        $this->joined_at = new DateTime($data->joined_at, $utc_time_zone);
-        
-        if (property_exists($data, 'premium_since'))
-            $this->premium_since = new DateTime($data->premium_since, $utc_time_zone);
+	public function __construct($data)
+	{
+		$utc_time_zone = new DateTimeZone('UTC');
 
-        $this->deaf = $data->deaf;
-        $this->mute = $data->mute;
-    }
+		if (property_exists($data, 'nick'))
+			$this->nickname = $data->nick;
+
+		$this->roles = $data->roles;
+		$this->joined_at = new DateTime($data->joined_at, $utc_time_zone);
+
+		if (property_exists($data, 'premium_since'))
+			$this->premium_since = new DateTime($data->premium_since, $utc_time_zone);
+
+		$this->deaf = $data->deaf;
+		$this->mute = $data->mute;
+	}
+
 }

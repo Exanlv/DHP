@@ -1,49 +1,46 @@
 <?php
+
 declare(strict_types = 1);
 
 namespace DHP;
 
-use EventEmitter\EventEmitter;
 use DHP\Classes\Message;
-use DHPCore\MinimalDiscordClient;
 use DHP\RestClient\Client as RestClient;
+use DHPCore\MinimalDiscordClient;
 
-class Client extends EventEmitter
+class Client extends \EventEmitter\EventEmitter
 {
-    /**
-     * @var MinimalDiscordClient
-     */
-    private $minimal_client;
 
-    /**
-     * @var RestClient
-     */
-    private $rest_client;
+	private MinimalDiscordClient $minimal_client;
 
-    public function __construct($token)
-    {
-        $this->minimal_client = new MinimalDiscordClient($token);
+	private RestClient $rest_client;
 
-        $this->rest_client = new RestClient($token);
-        
-        $this->minimal_client->on('HEARTBEAT', function () {
-            $this->rest_client->cleanup();
-        });
+	public function __construct($token)
+	{
+		$this->minimal_client = new MinimalDiscordClient($token);
 
-        $this->minimal_client->on('TICK', function () {
-            $this->rest_client->tick();
-        });
+		$this->rest_client = new RestClient($token);
 
-        $this->minimal_client->on('MESSAGE_CREATE', function ($data) {
-            $this->emit('message', (new Message($data, $this->rest_client)));
-        });
+		$this->minimal_client->on('HEARTBEAT', function (): void {
+			$this->rest_client->cleanup();
+		});
 
-        // $this->minimal_client->on('GUILD_CREATE', function ($data) {
-            // print_r(new Guild($data, $this->rest_client));
-        // });
-    }
+		$this->minimal_client->on('TICK', function (): void {
+			$this->rest_client->tick();
+		});
 
-    public function start_handling() {
-        $this->minimal_client->start_handling();
-    }
+		$this->minimal_client->on('MESSAGE_CREATE', function ($data): void {
+			$this->emit('message', (new Message($data, $this->rest_client)));
+		});
+
+		// $this->minimal_client->on('GUILD_CREATE', function ($data) {
+			// print_r(new Guild($data, $this->rest_client));
+		// });
+	}
+
+	public function start_handling(): void
+	{
+		$this->minimal_client->start_handling();
+	}
+
 }

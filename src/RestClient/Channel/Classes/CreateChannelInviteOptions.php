@@ -1,36 +1,22 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\RestClient\Channel\Classes;
 
 class CreateChannelInviteOptions
 {
-    /**
-     * @var int
-     */
-    public $max_age;
 
-    /**
-     * @var int
-     */
-    public $max_users;
+	public int $max_age;
 
-    /**
-     * @var boolean
-     */
-    public $temporary;
+	public int $max_users;
 
-    /**
-     * @var boolean
-     */
-    public $unique;
+	public bool $temporary;
 
-    /**
-     * @var string
-     */
-    public $target_user;
+	public bool $unique;
 
-    /**
-     * @var int
-     */
-    public $target_user_type;
+	public string $target_user;
+
+	public int $target_user_type;
+
 }

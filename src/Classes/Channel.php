@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\Classes;
 
 use Closure;
@@ -9,190 +11,141 @@ use DHP\RestClient\Client as RestClient;
 
 class Channel
 {
-    /**
-     * @var RestClient
-     */
-    private $rest_client;
-    
-    /**
-     * @var string
-     */
-    public $id;
 
-    /**
-     * @var string
-     */
-    public $type;
+	private RestClient $rest_client;
 
-    /**
-     * @var string
-     */
-    public $guild_id;
+	public string $id;
 
-    /**
-     * @var string
-     */
-    public $position;
+	public string $type;
 
-    /**
-     * @var PermissionOverwrite[]
-     */
-    public $permission_overwrites = [];
+	public string $guild_id;
 
-    /**
-     * @var string
-     */
-    public $name;
+	public string $position;
 
-    /**
-     * @var string
-     */
-    public $topic;
+	/**
+	 * @var \DHP\Classes\PermissionOverwrite[]
+	 */
+	public array $permission_overwrites = [];
 
-    /**
-     * @var boolean
-     */
-    public $nsfw;
+	public string $name;
 
-    /**
-     * @var string
-     */
-    public $last_message_id;
+	public string $topic;
 
-    /**
-     * @var int
-     */
-    public $bitrate;
+	public bool $nsfw;
 
-    /**
-     * @var int
-     */
-    public $user_limit;
+	public string $last_message_id;
 
-    /**
-     * @var int
-     */
-    public $user_rate_limit;
+	public int $bitrate;
 
-    /**
-     * @var User[]
-     */
-    public $recipients = [];
+	public int $user_limit;
 
-    /**
-     * @var string
-     */
-    public $icon;
+	public int $user_rate_limit;
 
-    /**
-     * @var string
-     */
-    public $owner_id;
+	/**
+	 * @var \DHP\Classes\User[]
+	 */
+	public array $recipients = [];
 
-    /**
-     * @var string
-     */
-    public $application_id;
+	public string $icon;
 
-    /**
-     * @var string
-     */
-    public $parent_id;
+	public string $owner_id;
 
-    /**
-     * @var string
-     */
-    public $last_pin_timestamp;
+	public string $application_id;
 
-    public function __construct($data, RestClient &$rest_client)
-    {
-        $this->rest_client = &$rest_client;
+	public string $parent_id;
 
-        $this->id = $data->id;
-        
-        $this->type = [
-            'GUILD_TEXT',
-            'DM',
-            'GUILD_VOICE',
-            'GROUP_DM',
-            'GUILD_CATEGORY',
-            'GUILD_NEWS',
-            'GUILD_STORE'
-        ][$data->type];
+	public string $last_pin_timestamp;
 
-        if (property_exists($data, 'guild_id'))
-            $this->guild_id = $data->guild_id;
-        
-        if (property_exists($data, 'position'))
-            $this->position = $data->position;
+	public function __construct($data, RestClient &$rest_client)
+	{
+		$this->rest_client = &$rest_client;
 
-        if (property_exists($data, 'permission_overwrites'))
-            foreach ($data->permission_overwrites as $permission_overwrite)
-                $this->permission_overwrites[] = new PermissionOverwrite($permission_overwrite);
+		$this->id = $data->id;
 
-        if (property_exists($data, 'name'))
-            $this->name = $data->name;
+		$this->type = [
+			'GUILD_TEXT',
+			'DM',
+			'GUILD_VOICE',
+			'GROUP_DM',
+			'GUILD_CATEGORY',
+			'GUILD_NEWS',
+			'GUILD_STORE',
+		][$data->type];
 
-        if (property_exists($data, 'topic'))
-            $this->topic = $data->topic;
-        
-        if (property_exists($data, 'nsfw'))
-            $this->nsfw = $data->nsfw;
+		if (property_exists($data, 'guild_id'))
+			$this->guild_id = $data->guild_id;
 
-        if (property_exists($data, 'last_message_id'))
-            $this->last_message_id = $data->last_message_id;
+		if (property_exists($data, 'position'))
+			$this->position = $data->position;
 
-        if (property_exists($data, 'bitrate'))
-            $this->bitrate = $data->bitrate;
+		if (property_exists($data, 'permission_overwrites'))
+			foreach ($data->permission_overwrites as $permission_overwrite)
+				$this->permission_overwrites[] = new PermissionOverwrite($permission_overwrite);
 
-        if (property_exists($data, 'user_limit'))
-            $this->user_limit = $data->user_limit;
+		if (property_exists($data, 'name'))
+			$this->name = $data->name;
 
-        if (property_exists($data, 'rate_limit_per_user'))
-            $this->rate_limit_per_user = $data->rate_limit_per_user;
+		if (property_exists($data, 'topic'))
+			$this->topic = $data->topic;
 
-        if (property_exists($data, 'recipients'))
-            foreach ($data->recipients as $user)
-                $this->recipients[] = new User($user, $this->rest_client);
+		if (property_exists($data, 'nsfw'))
+			$this->nsfw = $data->nsfw;
 
-        if (property_exists($data, 'icon'))
-            $this->icon = $data->icon;
+		if (property_exists($data, 'last_message_id'))
+			$this->last_message_id = $data->last_message_id;
 
-        if (property_exists($data, 'owner_id'))
-            $this->owner_id = $data->owner_id;
+		if (property_exists($data, 'bitrate'))
+			$this->bitrate = $data->bitrate;
 
-        if (property_exists($data, 'application_id'))
-            $this->application_id = $data->application_id;
+		if (property_exists($data, 'user_limit'))
+			$this->user_limit = $data->user_limit;
 
-        if (property_exists($data, 'parent_id'))
-            $this->parent_id = $data->parent_id;
+		if (property_exists($data, 'rate_limit_per_user'))
+			$this->rate_limit_per_user = $data->rate_limit_per_user;
 
-        if (property_exists($data, 'last_pin_timestamp'))
-            $this->last_pin_timestamp = $data->last_pin_timestamp;
-    }
+		if (property_exists($data, 'recipients'))
+			foreach ($data->recipients as $user)
+				$this->recipients[] = new User($user, $this->rest_client);
 
-    public function edit(EditChannelOptions $options, Closure $callback = null)
-    {
-        $this->rest_client->channel_controller->edit($this->id, $options, $callback);
-    }
+		if (property_exists($data, 'icon'))
+			$this->icon = $data->icon;
 
-    public function delete(Closure $callback = null)
-    {
-        $this->rest_client->channel_controller->delete($this->id, $callback);
-    }
+		if (property_exists($data, 'owner_id'))
+			$this->owner_id = $data->owner_id;
 
-    public function get_pinned_messages(Closure $callback)
-    {
-        $this->rest_client->channel_controller->get_pinned_messages($this->id, $callback);
-    }
+		if (property_exists($data, 'application_id'))
+			$this->application_id = $data->application_id;
 
-    public function create_invite(CreateChannelInviteOptions $options, Closure $callback = null)
-    {
-        $this->rest_client->channel_controller->create_invite($this->id, $options, $callback);
-    }
+		if (property_exists($data, 'parent_id'))
+			$this->parent_id = $data->parent_id;
 
-    public function get_invites(Closure $callback)
-    {
-        $this->rest_client->channel_controller->get_invites($this->id, $callback);
-    }
+		if (property_exists($data, 'last_pin_timestamp'))
+			$this->last_pin_timestamp = $data->last_pin_timestamp;
+	}
+
+	public function edit(EditChannelOptions $options, ?Closure $callback = null): void
+	{
+		$this->rest_client->channel_controller->edit($this->id, $options, $callback);
+	}
+
+	public function delete(?Closure $callback = null): void
+	{
+		$this->rest_client->channel_controller->delete($this->id, $callback);
+	}
+
+	public function get_pinned_messages(Closure $callback): void
+	{
+		$this->rest_client->channel_controller->get_pinned_messages($this->id, $callback);
+	}
+
+	public function create_invite(CreateChannelInviteOptions $options, ?Closure $callback = null): void
+	{
+		$this->rest_client->channel_controller->create_invite($this->id, $options, $callback);
+	}
+
+	public function get_invites(Closure $callback): void
+	{
+		$this->rest_client->channel_controller->get_invites($this->id, $callback);
+	}
+
 }
