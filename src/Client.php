@@ -1,13 +1,12 @@
 <?php
+declare(strict_types = 1);
+
 namespace DHP;
 
-use DHP\Classes\Guild;
+use EventEmitter\EventEmitter;
 use DHP\Classes\Message;
-use DHP\RestClient\Channel\ChannelRestClient;
-use DHP\RestClient\Channel\Classes\SendMessageOptions;
 use DHPCore\MinimalDiscordClient;
 use DHP\RestClient\Client as RestClient;
-use EventEmitter\EventEmitter;
 
 class Client extends EventEmitter
 {

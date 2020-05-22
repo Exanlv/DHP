@@ -11,5 +11,8 @@
         "psr-4": {
             "DHP\\": "src"
         }
+    },
+    "require-dev": {
+        "consistence/coding-standard": "^3.10"
     }
 }
