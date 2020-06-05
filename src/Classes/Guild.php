@@ -17,9 +17,9 @@ class Guild
 
 	public string $name;
 
-	public icon $icon;
+	public string $icon;
 
-	public string $splash;
+	public ?string $splash;
 
 	public string $discovery_splash;
 
@@ -106,11 +106,11 @@ class Guild
 
 	public int $max_members;
 
-	public string $vanity_url_code;
+	public ?string $vanity_url_code;
 
-	public string $description;
+	public ?string $description;
 
-	public string $banner;
+	public ?string $banner;
 
 	public int $premium_tier;
 

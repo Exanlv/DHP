@@ -6,7 +6,7 @@ namespace DHP\RestClient;
 
 use Closure;
 use DHP\RestClient\Channel\ChannelController;
-use DHP\RestClient\Classes\QueuedResponse;
+use DHP\RestClient\Classes\QueuedRequest;
 use stdClass;
 
 class Client
@@ -39,21 +39,21 @@ class Client
 	{
 		foreach ($this->request_queue as $rate_limit_key => $request_group) {
 			if (count($request_group) < 1) {
-				unset($this->request_queue[$rate_limit_key]);
+				unset($this->request_queue->{$rate_limit_key});
 				continue;
 			}
 
-			if (!isset($this->last_requests[$rate_limit_key])) {
+			if (!property_exists($this->last_requests, $rate_limit_key)) {
 				$this->handle_queued_request($rate_limit_key);
 				continue;
 			}
 
-			if (!property_exists($this->last_requests[$rate_limit_key]->headers, 'x-ratelimit-bucket')) {
+			if (!property_exists($this->last_requests->{$rate_limit_key}->headers, 'x-ratelimit-bucket')) {
 				$this->handle_queued_request($rate_limit_key);
 				continue;
 			}
 
-			if ($this->last_requests[$rate_limit_key]->headers->{'x-ratelimit-reset'} < time() || $this->last_requests[$rate_limit_key]->headers->{'x-ratelimit-remaining'} > 0) {
+			if ($this->last_requests->{$rate_limit_key}->headers->{'x-ratelimit-reset'} < time() || $this->last_requests->{$rate_limit_key}->headers->{'x-ratelimit-remaining'} > 0) {
 				$this->handle_queued_request($rate_limit_key);
 				continue;
 			}
@@ -67,7 +67,7 @@ class Client
 	 */
 	private function handle_queued_request(string $rate_limit_key): void
 	{
-		$request = array_shift($this->request_queue[$rate_limit_key]);
+		$request = array_shift($this->request_queue->{$rate_limit_key});
 
 		$res = $this->send_request($request->method, $request->uri, $request->data, $request->headers);
 
@@ -75,7 +75,7 @@ class Client
 			null : new Error($res->status, $res->data);
 
 		if (property_exists($res->headers, 'x-ratelimit-bucket'))
-			$this->last_requests[$rate_limit_key] = $res;
+			$this->last_requests->{$rate_limit_key} = $res;
 
 		if ($request->callback !== null) {
 			($request->callback)($error, $res);
@@ -89,26 +89,26 @@ class Client
 	{
 		foreach ($this->last_requests as $key => $request) {
 			if (!property_exists($request->headers, 'x-ratelimit-reset') || $request->headers->{'x-ratelimit-reset'} < time()) {
-				unset($this->last_requests[$key]);
+				unset($this->last_requests->{$key});
 			}
 		}
 	}
 
 	public function queue_request(string $method, string $uri, ?object $data = null, ?object $headers = null, string $rate_limit_key, ?Closure $callback = null, string $expected_response_code = '200'): void
 	{
-		if (!isset($this->request_queue[$rate_limit_key]))
-			$this->request_queue[$rate_limit_key] = [];
+		if (!property_exists($this->request_queue, $rate_limit_key))
+			$this->request_queue->{$rate_limit_key} = [];
 
-		$queued_response = new QueuedResponse();
+		$queued_request = new QueuedRequest();
 
-		$queued_response->method = $method;
-		$queued_response->uri = $uri;
-		$queued_response->data = $data;
-		$queued_response->headers = $headers;
-		$queued_response->expected_response_code = $expected_response_code;
-		$queued_response->callback = $callback;
+		$queued_request->method = $method;
+		$queued_request->uri = $uri;
+		$queued_request->data = $data;
+		$queued_request->headers = $headers;
+		$queued_request->expected_response_code = $expected_response_code;
+		$queued_request->callback = $callback;
 
-		$this->request_queue->{$rate_limit_key}[] = $queued_response;
+		$this->request_queue->{$rate_limit_key}[] = $queued_request;
 	}
 
 
@@ -120,7 +120,7 @@ class Client
 	 *
 	 * @return object
 	 */
-	private function send_request(string $method, string $uri, ?object $data = null, ?object $headers): object
+	private function send_request(string $method, string $uri, ?object $data = null, ?object $headers)
 	{
 		$req = curl_init($this->base_url . $uri);
 
@@ -142,7 +142,7 @@ class Client
 			$setopt[CURLOPT_POSTFIELDS] = $encoded_data;
 			$setopt[CURLOPT_HTTPHEADER] = array_merge(
 				$default_headers,
-				$headers,
+				(array) $headers ?? [],
 				[
 					'Content-Length: ' . strlen($encoded_data),
 				]
@@ -150,7 +150,7 @@ class Client
 		} else {
 			$setopt[CURLOPT_HTTPHEADER] = array_merge(
 				$default_headers,
-				$headers,
+				(array) $headers ?? [],
 				[
 					'Content-Length: 0',
 				]

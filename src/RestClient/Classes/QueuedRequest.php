@@ -6,7 +6,7 @@ namespace DHP\RestClient\Classes;
 
 use Closure;
 
-class QueuedResponse
+class QueuedRequest
 {
 
 	public string $method;
@@ -17,7 +17,7 @@ class QueuedResponse
 
 	public ?object $headers;
 
-	public Closure $callback;
+	public ?Closure $callback;
 
 	public string $expected_response_code;
 

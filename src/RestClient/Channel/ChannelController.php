@@ -38,7 +38,7 @@ class ChannelController
 			$callback($error, $channel);
 		};
 
-		$this->rest_client->queue_request('get', $uri, null, [], $uri, $final_callback);
+		$this->rest_client->queue_request('get', $uri, null, null, $uri, $final_callback);
 	}
 
 	public function edit(string $channel_id, EditChannelOptions $options, ?Closure $callback = null): void
@@ -55,14 +55,14 @@ class ChannelController
 			if ($option === null)
 				unset($options->{$key});
 
-		$this->rest_client->queue_request('patch', $uri, $options, [], $uri, $final_callback);
+		$this->rest_client->queue_request('patch', $uri, $options, null, $uri, $final_callback);
 	}
 
 	public function delete(string $channel_id, ?Closure $callback = null): void
 	{
 		$uri = 'channels/' . $channel_id;
 
-		$this->rest_client->queue_request('delete', $uri, null, [], $uri, $callback);
+		$this->rest_client->queue_request('delete', $uri, null, null, $uri, $callback);
 	}
 
 	public function fetch_messages(string $channel_id, FetchMessagesOptions $options, ?Closure $callback = null): void
@@ -77,7 +77,7 @@ class ChannelController
 			$callback($error, $messages);
 		};
 
-		$this->rest_client->queue_request('get', $uri, $options, [], $uri, $final_callback);
+		$this->rest_client->queue_request('get', $uri, $options, null, $uri, $final_callback);
 	}
 
 	public function fetch_message(string $channel_id, string $message_id, ?Closure $callback = null): void
@@ -91,7 +91,7 @@ class ChannelController
 			$callback($error, $message);
 		};
 
-		$this->rest_client->queue_request('get', $uri, null, [], $uri);
+		$this->rest_client->queue_request('get', $uri, null, null, $uri, $final_callback);
 	}
 
 	public function send_message(string $channel_id, SendMessageOptions $options, ?Closure $callback = null): void
@@ -104,7 +104,7 @@ class ChannelController
 			$callback($error, $message);
 		};
 
-		$this->rest_client->queue_request('post', $uri, $options, [], $uri, $final_callback);
+		$this->rest_client->queue_request('post', $uri, $options, null, $uri, $final_callback);
 	}
 
 	public function edit_message(string $channel_id, string $message_id, EditMessageOptions $options, ?Closure $callback = null): void
@@ -118,7 +118,7 @@ class ChannelController
 			$callback($error, $message);
 		};
 
-		$this->rest_client->queue_request('patch', $uri, $options, [], $rate_limit_key, $final_callback);
+		$this->rest_client->queue_request('patch', $uri, $options, null, $rate_limit_key, $final_callback);
 	}
 
 	public function delete_message(string $channel_id, string $message_id, ?Closure $callback = null): void
@@ -126,7 +126,7 @@ class ChannelController
 		$rate_limit_key = 'channels/' . $channel_id . '/messages';
 		$uri = $rate_limit_key . '/' . $message_id;
 
-		$this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback, '204');
+		$this->rest_client->queue_request('delete', $uri, null, null, $rate_limit_key, $callback, '204');
 	}
 
 	public function add_reaction(string $channel_id, string $message_id, Emoji $emoji, ?Closure $callback = null): void
@@ -134,7 +134,7 @@ class ChannelController
 		$rate_limit_key = 'channels/' . $channel_id;
 		$uri = $rate_limit_key . '/messages/' . $message_id . '/reactions/' . $emoji->url_identifier();
 
-		$this->rest_client->queue_request('put', $uri, null, [], $rate_limit_key, $callback, '204');
+		$this->rest_client->queue_request('put', $uri, null, null, $rate_limit_key, $callback, '204');
 	}
 
 	public function delete_reaction(string $channel_id, string $message_id, Emoji $emoji, ?Closure $callback = null): void
@@ -142,7 +142,7 @@ class ChannelController
 		$rate_limit_key = 'channels/' . $channel_id;
 		$uri = $rate_limit_key . '/messages/' . $message_id . '/reactions/' . $emoji->url_identifier();
 
-		$this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback, '204');
+		$this->rest_client->queue_request('delete', $uri, null, null, $rate_limit_key, $callback, '204');
 	}
 
 	public function delete_user_reaction(string $channel_id, string $message_id, Emoji $emoji, string $user_id, ?Closure $callback = null): void
@@ -150,7 +150,7 @@ class ChannelController
 		$rate_limit_key = 'channels/' . $channel_id;
 		$uri = $rate_limit_key . '/messages/' . $message_id . '/reactions/' . $emoji->url_identifier() . '/' . $user_id;
 
-		$this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback, '204');
+		$this->rest_client->queue_request('delete', $uri, null, null, $rate_limit_key, $callback, '204');
 	}
 
 	public function get_reactions(string $channel_id, string $message_id, Emoji $emoji, GetReactionsOptions $options, ?Closure $callback = null): void
@@ -166,7 +166,7 @@ class ChannelController
 			$callback($users);
 		};
 
-		$this->rest_client->queue_request('get', $uri, $options, [], $rate_limit_key, $final_callback);
+		$this->rest_client->queue_request('get', $uri, $options, null, $rate_limit_key, $final_callback);
 	}
 
 	public function delete_all_reactions(string $channel_id, string $message_id, ?Closure $callback = null): void
@@ -174,7 +174,7 @@ class ChannelController
 		$rate_limit_key = 'channels/' . $channel_id;
 		$uri = $rate_limit_key . '/messages/' . $message_id . '/reactions';
 
-		$this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback);
+		$this->rest_client->queue_request('delete', $uri, null, null, $rate_limit_key, $callback);
 	}
 
 	public function delete_all_reactions_of_type(string $channel_id, string $message_id, Emoji $emoji, ?Closure $callback = null): void
@@ -182,7 +182,7 @@ class ChannelController
 		$rate_limit_key = 'channels/' . $channel_id;
 		$uri = $rate_limit_key . '/messages/' . $message_id . '/reactions/' . $emoji->url_identifier();
 
-		$this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback);
+		$this->rest_client->queue_request('delete', $uri, null, null, $rate_limit_key, $callback);
 	}
 
 	/**
@@ -209,7 +209,7 @@ class ChannelController
 			$callback($error, $invites);
 		};
 
-		$this->rest_client->queue_request('get', $uri, null, [], $uri, $final_callback);
+		$this->rest_client->queue_request('get', $uri, null, null, $uri, $final_callback);
 	}
 
 	public function create_invite(string $channel_id, CreateChannelInviteOptions $options, ?Closure $callback = null): void
@@ -226,7 +226,7 @@ class ChannelController
 			$callback($error, $invite);
 		};
 
-		$this->rest_client->queue_request('post', $uri, $options, [], $uri, $final_callback);
+		$this->rest_client->queue_request('post', $uri, $options, null, $uri, $final_callback);
 	}
 
 	public function delete_permission(string $channel_id, string $overwrite_id): void
@@ -246,10 +246,10 @@ class ChannelController
 				return new Message($d, $this->rest_client);
 			}, $data->data) : null;
 
-			$callback($pinned_messages);
+			$callback($error, $pinned_messages);
 		};
 
-		$this->rest_client->queue_request('get', $uri, null, [], $uri, $final_callback);
+		$this->rest_client->queue_request('get', $uri, null, null, $uri, $final_callback);
 	}
 
 	public function pin_message(string $channel_id, string $message_id, ?Closure $callback = null): void
@@ -257,7 +257,7 @@ class ChannelController
 		$rate_limit_key = 'channels/' . $channel_id . '/pins';
 		$uri = $rate_limit_key . '/' . $message_id;
 
-		$this->rest_client->queue_request('put', $uri, null, [], $rate_limit_key, $callback, '204');
+		$this->rest_client->queue_request('put', $uri, null, null, $rate_limit_key, $callback, '204');
 	}
 
 	public function unpin_message(string $channel_id, string $message_id, ?Closure $callback = null): void
@@ -265,7 +265,7 @@ class ChannelController
 		$rate_limit_key = 'channels/' . $channel_id . '/pins';
 		$uri = $rate_limit_key . '/' . $message_id;
 
-		$this->rest_client->queue_request('delete', $uri, null, [], $rate_limit_key, $callback, '204');
+		$this->rest_client->queue_request('delete', $uri, null, null, $rate_limit_key, $callback, '204');
 	}
 
 }

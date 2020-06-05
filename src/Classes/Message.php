@@ -92,7 +92,10 @@ class Message
 
 		$this->content = $data->content;
 		$this->sent_at = new DateTime($data->timestamp, $utc_date_time_zone);
-		$this->edited_at = new DateTime($data->edited_timestamp, $utc_date_time_zone);
+
+		if (property_exists($data, 'edited_at'))
+			$this->edited_at = new DateTime($data->edited_timestamp, $utc_date_time_zone);
+		
 		$this->tts = $data->tts;
 		$this->mentioned_everyone = $data->mention_everyone;
 		$this->mentioned_users = [];

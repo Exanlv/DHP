@@ -9,7 +9,7 @@ use stdClass;
 class PermissionOverwrite
 {
 
-	public id $id;
+	public string $id;
 
 	public string $type;
 

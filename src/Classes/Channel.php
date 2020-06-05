@@ -21,7 +21,7 @@ class Channel
 
 	public string $guild_id;
 
-	public string $position;
+	public int $position;
 
 	/**
 	 * @var \DHP\Classes\PermissionOverwrite[]
@@ -30,7 +30,7 @@ class Channel
 
 	public string $name;
 
-	public string $topic;
+	public ?string $topic;
 
 	public bool $nsfw;
 
