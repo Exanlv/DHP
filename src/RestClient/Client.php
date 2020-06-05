@@ -6,6 +6,8 @@ namespace DHP\RestClient;
 
 use Closure;
 use DHP\RestClient\Channel\ChannelController;
+use DHP\RestClient\Classes\QueuedResponse;
+use stdClass;
 
 class Client
 {
@@ -14,20 +16,17 @@ class Client
 
 	private string $base_url = 'https://discord.com/api/';
 
-	/**
-	 * @var array
-	 */
-	public array $last_requests = [];
+	public object $last_requests;
 
-	/**
-	 * @var array
-	 */
-	private array $request_queue = [];
+	public object $request_queue;
 
 	public ChannelController $channel_controller;
 
-	public function __construct($token)
+	public function __construct(string $token)
 	{
+		$this->last_requests = new stdClass();
+		$this->request_queue = new stdClass();
+
 		$this->token = $token;
 
 		$this->channel_controller = new ChannelController($this);
@@ -64,8 +63,9 @@ class Client
 
 	/**
 	 * Handle a queued request
+	 * @param string $rate_limit_key
 	 */
-	private function handle_queued_request($rate_limit_key): void
+	private function handle_queued_request(string $rate_limit_key): void
 	{
 		$request = array_shift($this->request_queue[$rate_limit_key]);
 
@@ -94,27 +94,21 @@ class Client
 		}
 	}
 
-	/**
-	 * @param string $method
-	 * @param string $uri
-	 * @param array $data
-	 * @param array $headers
-	 * @param string $rate_limit_key
-	 * @param \Closure $callback
-	 */
-	public function queue_request(string $method, string $uri, ?array $data = null, array $headers = [], string $rate_limit_key, ?Closure $callback = null, $expected_response_code = '200'): void
+	public function queue_request(string $method, string $uri, ?object $data = null, ?object $headers = null, string $rate_limit_key, ?Closure $callback = null, string $expected_response_code = '200'): void
 	{
 		if (!isset($this->request_queue[$rate_limit_key]))
 			$this->request_queue[$rate_limit_key] = [];
 
-		$this->request_queue[$rate_limit_key][] = (object) [
-			'method' => $method,
-			'uri' => $uri,
-			'data' => $data,
-			'headers' => $headers,
-			'callback' => $callback,
-			'expected_response_code' => $expected_response_code,
-		];
+		$queued_response = new QueuedResponse();
+
+		$queued_response->method = $method;
+		$queued_response->uri = $uri;
+		$queued_response->data = $data;
+		$queued_response->headers = $headers;
+		$queued_response->expected_response_code = $expected_response_code;
+		$queued_response->callback = $callback;
+
+		$this->request_queue->{$rate_limit_key}[] = $queued_response;
 	}
 
 
@@ -126,7 +120,7 @@ class Client
 	 *
 	 * @return object
 	 */
-	private function send_request(string $method, string $uri, ?array $data = null, array $headers = []): object
+	private function send_request(string $method, string $uri, ?object $data = null, ?object $headers): object
 	{
 		$req = curl_init($this->base_url . $uri);
 
