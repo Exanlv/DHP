@@ -120,7 +120,7 @@ class Client
 	 *
 	 * @return object
 	 */
-	private function send_request(string $method, string $uri, ?object $data = null, ?object $headers)
+	private function send_request(string $method, string $uri, ?object $data = null, ?object $headers): object
 	{
 		$req = curl_init($this->base_url . $uri);
 
