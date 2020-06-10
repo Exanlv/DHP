@@ -30,13 +30,13 @@ class PartialMember
 	{
 		$utc_time_zone = new DateTimeZone('UTC');
 
-		if (property_exists($data, 'nick'))
+		if (property_exists($data, 'nick') && $data->nick !== null)
 			$this->nickname = $data->nick;
 
 		$this->roles = $data->roles;
 		$this->joined_at = new DateTime($data->joined_at, $utc_time_zone);
 
-		if (property_exists($data, 'premium_since'))
+		if (property_exists($data, 'premium_since') && $data->premium_since !== null)
 			$this->premium_since = new DateTime($data->premium_since, $utc_time_zone);
 
 		$this->deaf = $data->deaf;

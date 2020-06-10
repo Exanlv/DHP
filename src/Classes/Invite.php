@@ -14,19 +14,19 @@ class Invite
 
 	public string $code;
 
-	public Guild $guild;
+	public ?Guild $guild;
 
-	public PartialChannel $channel;
+	public Channel $channel;
 
-	public User $inviter;
+	public ?User $inviter;
 
-	public PartialUser $target_user;
+	public ?User $target_user;
 
-	public int $target_user_type;
+	public ?int $target_user_type;
 
-	public int $approximate_presence_count;
+	public ?int $approximate_presence_count;
 
-	public int $approximate_member_count;
+	public ?int $approximate_member_count;
 
 	public function __construct(stdClass $data, RestClient &$rest_client)
 	{
@@ -53,6 +53,11 @@ class Invite
 
 		if (property_exists($data, 'approximate_member_count'))
 			$this->approximate_member_count = $data->approximate_member_count;
+	}
+
+	public function invite_link(): string
+	{
+		return 'https://discord.gg/' . $this->code;
 	}
 
 }

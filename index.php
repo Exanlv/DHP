@@ -22,7 +22,7 @@ $client->on('message', function (Message $message) {
         $reply = new SendMessageOptions();
         $reply->content = 'Pong!';
 
-        $message->reply($reply, function ($err, $message) {
+        $message->reply($reply, function (?Error $err, ?Message $message) {
             if ($err !== null)
                 print_r($err);
 
@@ -46,19 +46,19 @@ $client->on('message', function (Message $message) {
 
         $reply->embed->fields[] = $embed_field;
 
-        $message->reply($reply, function ($err, $message) {
+        $message->reply($reply, function (?Error $err, ?Message $message) {
             print_r($message);
         });
     }
 
     if ($message->content === 'channel') {
-        $message->channel(function ($err, $channel) {
+        $message->channel(function (?Error $err, ?Channel $channel) {
             print_r($channel);
         });
     }
 
     if ($message->content === 'delete') {
-        $message->delete(function ($err) use ($message) {
+        $message->delete(function (?Error $err) use ($message) {
             $reply = new SendMessageOptions();
             $reply->content = 'Message deleted <o/';
             
@@ -67,7 +67,7 @@ $client->on('message', function (Message $message) {
     }
 
     if ($message->content === 'edit') {
-        $message->channel(function ($err, $channel) {
+        $message->channel(function (?Error $err, ?Channel $channel) {
             $edit = new EditChannelOptions();
             $edit->name = 'Test ' . mt_rand(10000, 99999);
 
@@ -76,7 +76,7 @@ $client->on('message', function (Message $message) {
     }
 
     if ($message->content === 'delete-channel') {
-        $message->channel(function ($err, $channel) {
+        $message->channel(function (?Error $err, ?Channel $channel) {
             // $channel->delete();
         });
     }
@@ -86,14 +86,14 @@ $client->on('message', function (Message $message) {
     }
 
     if ($message->content === 'unpin') {
-        $message->pin(function ($err) use ($message) {
+        $message->pin(function (?Error $err) use ($message) {
             $message->unpin();
         });
     }
 
     if ($message->content === 'get-pins') {
-        $message->channel(function ($err, $channel) {
-            $channel->get_pinned_messages(function ($err, $messages) {
+        $message->channel(function (?Error $err, ?Channel $channel) {
+            $channel->get_pinned_messages(function (?Error $err, ?array $messages) {
                 foreach ($messages as $pinned_message) {
                     $reply = new SendMessageOptions();
                     $reply->content = $pinned_message->id;
@@ -105,16 +105,19 @@ $client->on('message', function (Message $message) {
     }
 
     if ($message->content === 'invite') {
-        $message->channel(function ($err, $channel) {
-            $channel->create_invite(new CreateChannelInviteOptions(), function ($err, $invite) {
-                print_r($invite);
+        $message->channel(function (?Error $err, ?Channel $channel) use ($message) {
+            $channel->create_invite(new CreateChannelInviteOptions(), function (?Error $err, ?Invite $invite) use ($message) {
+				$message_reply = new SendMessageOptions();
+				$message_reply->content = $invite->invite_link();
+				
+				$message->reply($message_reply);
             });
         });
     }
 
     if ($message->content === 'invites') {
-        $message->channel(function ($err, $channel) {
-            $channel->get_invites(function ($err, $invites) {
+        $message->channel(function (?Error $err, ?Channel $channel) {
+            $channel->get_invites(function (?Error $err, ?array $invites) {
                 print_r($invites);
             });
         });
