@@ -1,53 +1,41 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\RestClient\Channel\Classes;
+
+use DHP\Classes\Embed;
 
 class SendMessageOptions
 {
-    /**
-     * @var string
-     */
-    public $content;
 
-    /**
-     * @var int|string
-     */
-    public $nonce;
+	public string $content;
 
-    /**
-     * @var boolean
-     */
-    public $tts;
+	/**
+	 * @var int|string
+	 */
+	public $nonce;
 
-    /**
-     * @var any
-     */
-    public $file;
+	public bool $tts;
 
-    /**
-     * @var Embed
-     */
-    public $embed;
+	public any $file;
 
-    /**
-     * @var string
-     */
-    public $payload_json;
+	public Embed $embed;
 
-    /**
-     * @var AllowedMentions
-     */
-    public $allowed_mentions;
+	public string $payload_json;
 
-    /**
-     * @todo
-     * 
-     * Payload
-     * File
-     */
+	public AllowedMentions $allowed_mentions;
 
-    public function __construct()
-    {
-        $this->allowed_mentions = new AllowedMentions();
-    }
+	public function __construct()
+	{
+		$this->allowed_mentions = new AllowedMentions();
+	}
+
 }
+
+/**
+ * @todo
+ *
+ * Payload
+ * File
+ */

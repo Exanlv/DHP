@@ -1,51 +1,31 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\RestClient\Channel\Classes;
 
 class EditChannelOptions
 {
-    /**
-     * @var string
-     */
-    public $name;
 
-    /**
-     * @var int
-     */
-    public $type;
+	public string $name;
 
-    /**
-     * @var int
-     */
-    public $position;
+	public int $type;
 
-    /**
-     * @var boolean
-     */
-    public $nsfw;
+	public int $position;
 
-    /**
-     * @var int
-     */
-    public $rate_limit_per_user;
+	public bool $nsfw;
 
-    /**
-     * @var int
-     */
-    public $bitrate;
+	public int $rate_limit_per_user;
 
-    /**
-     * @var int
-     */
-    public $user_limit;
+	public int $bitrate;
 
-    /**
-     * @var PermissionOverwrite[]
-     */
-    public $permission_overwrites;
-    
-    /**
-     * @var string
-     */
-    public $parent_id;
+	public int $user_limit;
+
+	/**
+	 * @var \DHP\RestClient\Channel\Classes\PermissionOverwrite[] public $permission_overwrites
+	 */
+	public array $permission_overwrites;
+
+	public string $parent_id;
+
 }

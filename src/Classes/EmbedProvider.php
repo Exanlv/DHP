@@ -1,28 +1,27 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\Classes;
+
+use stdClass;
 
 class EmbedProvider
 {
-    /**
-     * @var string
-     */
-    public $name;
 
-    /**
-     * @var string
-     */
-    public $url;
+	public string $name;
 
-    public function __construct($data = null)
-    {
-        if ($data !== null) {
-            if (property_exists($data, 'name'))
-                $this->name = $data->name;
+	public string $url;
 
-            if (property_exists($data, 'url'))
-                $this->url = $data->url;
-        }
-    }
+	public function __construct(?stdClass $data = null)
+	{
+		if ($data !== null) {
+			if (property_exists($data, 'name'))
+				$this->name = $data->name;
+
+			if (property_exists($data, 'url'))
+				$this->url = $data->url;
+		}
+	}
 
 }

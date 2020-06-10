@@ -1,51 +1,37 @@
 <?php
+
+declare(strict_types = 1);
+
 namespace DHP\Classes;
+
+use stdClass;
 
 class Attachment
 {
-    /**
-     * @var string
-     */
-    public $id;
 
-    /**
-     * @var string
-     */
-    public $filename;
+	public string $id;
 
-    /**
-     * @var int
-     */
-    public $size;
+	public string $filename;
 
-    /**
-     * @var string
-     */
-    public $url;
+	public int $size;
 
-    /**
-     * @var string
-     */
-    public $proxy_url;
+	public string $url;
 
-    /**
-     * @var int
-     */
-    public $height;
+	public string $proxy_url;
 
-    /**
-     * @var int
-     */
-    public $width;
+	public int $height;
 
-    public function __construct($data)
-    {
-        $this->id = $data->id;
-        $this->filename = $data->filename;
-        $this->size = $data->size;
-        $this->url = $data->url;
-        $this->proxy_url = $data->proxy_url;
-        $this->height = $data->height;
-        $this->width = $data->width;
-    }
+	public int $width;
+
+	public function __construct(stdClass $data)
+	{
+		$this->id = $data->id;
+		$this->filename = $data->filename;
+		$this->size = $data->size;
+		$this->url = $data->url;
+		$this->proxy_url = $data->proxy_url;
+		$this->height = $data->height;
+		$this->width = $data->width;
+	}
+
 }

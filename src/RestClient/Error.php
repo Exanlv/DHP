@@ -1,23 +1,23 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\RestClient;
+
+use stdClass;
 
 class Error
 {
-    /**
-     * @var string
-     */
-    public $code;
 
-    /**
-     * @var any
-     */
-    public $data;
+	public string $code;
 
-    public function __construct($code, $data)
-    {
-        $this->code = $code;
+	public stdClass $data;
 
-        $this->data = $data;
-    }
+	public function __construct(string $code, stdClass $data)
+	{
+		$this->code = $code;
+
+		$this->data = $data;
+	}
+
 }

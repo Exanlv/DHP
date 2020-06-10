@@ -1,26 +1,18 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\RestClient\Channel\Classes;
 
 class FetchMessagesOptions
 {
-    /**
-     * @var string
-     */
-    public $around;
-    
-    /**
-     * @var string
-     */
-    public $before;
 
-    /**
-     * @var string
-     */
-    public $after;
+	public string $around;
 
-    /**
-     * @var int
-     */
-    public $limit;
+	public string $before;
+
+	public string $after;
+
+	public int $limit;
+
 }

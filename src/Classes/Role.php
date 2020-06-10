@@ -1,74 +1,52 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace DHP\Classes;
 
 use DHP\RestClient\Client as RestClient;
+use stdClass;
 
 class Role
 {
-    /**
-     * @var RestClient
-     */
-    private $rest_client;
 
-    /**
-     * @var string
-     */
-    public $id;
+	private RestClient $rest_client;
 
-    /**
-    * @var string
-     */
-    public $name;
+	public string $id;
 
-    /**
-     * @var integer
-     */
-    public $color;
+	public string $name;
 
-    /**
-     * @var boolean
-     */
-    public $hoist;
+	public int $color;
 
-    /**
-     * @var integer
-     */
-    public $position;
+	public bool $hoist;
 
-    /**
-     * @var integer
-     */
-    public $permissions;
+	public int $position;
 
-    /**
-     * @var boolean
-     */
-    public $managed;
+	public int $permissions;
 
-    /**
-     * @var boolean
-     */
-    public $mentionable;
+	public bool $managed;
 
-    public function __construct($data, RestClient &$rest_client)
-    {
-        $this->rest_client = &$rest_client;
+	public bool $mentionable;
 
-        $this->id = $data->id;
+	public function __construct(stdClass $data, RestClient &$rest_client)
+	{
+		$this->rest_client = &$rest_client;
 
-        $this->name = $data->name;
+		$this->id = $data->id;
 
-        $this->color = $data->color;
+		$this->name = $data->name;
 
-        $this->hoist = $data->hoist;
+		$this->color = $data->color;
 
-        $this->position = $data->position;
+		$this->hoist = $data->hoist;
 
-        $this->permissions = $data->permissions;
+		$this->position = $data->position;
 
-        $this->managed = $data->managed;
+		$this->permissions = $data->permissions;
 
-        $this->mentionable = $data->mentionable;
-    }
+		$this->managed = $data->managed;
+
+		$this->mentionable = $data->mentionable;
+	}
+
 }
