@@ -10,6 +10,7 @@ use DHP\RestClient\Guild\Classes\AddGuildMemberOptions;
 use DHP\RestClient\Guild\Classes\CreateChannelOptions;
 use DHP\RestClient\Guild\Classes\CreateGuildBanOptions;
 use DHP\RestClient\Guild\Classes\CreateGuildIntegrationsOptions;
+use DHP\RestClient\Guild\Classes\CreateGuildOptions;
 use DHP\RestClient\Guild\Classes\CreateGuildRoleOptions;
 use DHP\RestClient\Guild\Classes\EditChannelPositionsOptions;
 use DHP\RestClient\Guild\Classes\EditGuildIntegrationsOptions;
@@ -31,6 +32,10 @@ class GuildController
 	public function __construct(RestClient &$client)
 	{
 		$this->rest_client = &$client;
+	}
+
+	public function create(CreateGuildOptions $options, ?Closure $callback): void
+	{
 	}
 
 	public function get(string $guild_id, ?Closure $callback = null): void
