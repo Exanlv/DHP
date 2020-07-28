@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace DHP\RestClient\Guild;
 
 use Closure;
+use DHP\Classes\Guild;
 use DHP\RestClient\Client as RestClient;
 use DHP\RestClient\Guild\Classes\AddGuildMemberOptions;
 use DHP\RestClient\Guild\Classes\CreateChannelOptions;
@@ -36,14 +37,35 @@ class GuildController
 
 	public function create(CreateGuildOptions $options, ?Closure $callback): void
 	{
+		$uri = 'guilds';
+
+		$final_callback = $callback === null ? null : function ($error, $data) use ($callback): void {
+			$guild = $error === null ? new Guild($data, $this->rest_client) : null;
+
+			$callback($error, $guild);
+		};
+
+		$this->rest_client->queue_request('post', $uri, $options, null, $uri, $final_callback);
 	}
 
 	public function get(string $guild_id, ?Closure $callback = null): void
 	{
+		$rate_limit_key = 'guilds/' . $guild_id;
+		$uri = $rate_limit_key . '?with_counts=true';
+
+		$final_callback = $callback === null ? null : function ($error, $data) use ($callback): void {
+			$guild = $error === null ? new Guild($data, $this->rest_client) : null;
+
+			$callback($error, $guild);
+		};
+
+		$this->rest_client->queue_request('get', $uri, null, null, $rate_limit_key, $final_callback);
 	}
 
 	public function get_preview(string $guild_id, ?Closure $callback = null): void
 	{
+		$rate_limit_key = 'guilds/' . $guild_id;
+		$uri = $rate_limit_key . '/preview';
 	}
 
 	public function edit(string $guild_id, EditGuildOptions $options, ?Closure $callback = null): void
